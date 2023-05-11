@@ -18,7 +18,7 @@ public class Messages {
     }
 
     public String getPrefixedMessage(String key) {
-        return messages.getOrDefault("prefix", "> ") +
+        return messages.getOrDefault("prefix", "> ").replace("&", "§") +
                 messages.getOrDefault(key, "null").replace("&", "§");
     }
 

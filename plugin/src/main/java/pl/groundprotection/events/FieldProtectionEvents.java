@@ -52,12 +52,19 @@ public class FieldProtectionEvents implements Listener {
             if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
             if(field.getFieldOwner().equals(p.getName())) continue;
             if(field.getFieldContributors().contains(p.getName())) continue;
-            if(schema.getFlags().contains(FieldFlag.PROTECT_BLOCKS)) {
+            if(schema.getFlags().contains(FieldFlag.PREVENT_PLACE)) {
                 if(event.getItem() != null) {
                     if(event.getItem().getType().name().toLowerCase().contains("_bucket")) {
                         event.setCancelled(true);
                         break;
                     }
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PREVENT_SPAWN_EGGS)) {
+                if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
+                        || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
+                    event.setCancelled(true);
+                    break;
                 }
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_DOORS)) {
@@ -91,6 +98,13 @@ public class FieldProtectionEvents implements Listener {
             FieldSchema schema = field.getSchema();
             if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
             Entity clicked = event.getRightClicked();
+            if(schema.getFlags().contains(FieldFlag.PREVENT_SPAWN_EGGS)) {
+                if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
+                        || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
             if(schema.getFlags().contains(FieldFlag.PROTECT_ANIMALS)) {
                 if(dataHandler.getAnimals().contains(clicked.getType().name())) {
                     event.setCancelled(true);
@@ -180,12 +194,15 @@ public class FieldProtectionEvents implements Listener {
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
             if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
-            if(field.getSchema().getFlags().contains(FieldFlag.PROTECT_BLOCKS)) {
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PLACE)) {
                 if(event instanceof BlockPlaceEvent) {
                     BlockPlaceEvent ev1 = (BlockPlaceEvent) event;
                     ev1.setCancelled(true);
                     p.sendMessage(messages.getMessage("cantPlace"));
+                    return;
                 }
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
                 if(event instanceof BlockBreakEvent) {
                     BlockBreakEvent ev2 = (BlockBreakEvent) event;
                     ev2.setCancelled(true);

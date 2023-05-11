@@ -2,7 +2,8 @@ package pl.groundprotection.fields;
 
 public enum FieldFlag {
 
-    PROTECT_BLOCKS,
+    PREVENT_DESTROY,
+    PREVENT_PLACE,
     PROTECT_DOORS,
     PROTECT_CHESTS,
     PROTECT_OTHER_BLOCKS,
@@ -13,6 +14,7 @@ public enum FieldFlag {
     PREVENT_POTIONS,
     PREVENT_FISHING_ROD,
     PREVENT_BOW,
-    PREVENT_SPREAD
+    PREVENT_SPREAD,
+    PREVENT_SPAWN_EGGS
 
 }

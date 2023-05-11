@@ -19,6 +19,11 @@ public class Commands implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length > 0) {
+            if(args[0].equalsIgnoreCase("reload")) {
+                plugin.getDataHandler().save();
+                plugin.getDataHandler().loadConfig();
+                return true;
+            }
             if(sender instanceof Player) {
                 if(args[0].equalsIgnoreCase("info")) {
                     Field field = fieldsManager.getField(((Player) sender).getLocation());
@@ -32,9 +37,9 @@ public class Commands implements CommandExecutor {
                     for(Field field : fields) {
                         Location loc = field.getFieldLocation();
                         sender.sendMessage( field.getSchema().getName() + ": "
-                                + loc.getX() + ", "
-                                + loc.getY() + ", "
-                                + loc.getZ()
+                                + (int) loc.getX() + ", "
+                                + (int) loc.getY() + ", "
+                                + (int) loc.getZ()
                                 + " (" + loc.getWorld().getName() + ")");
                     }
                 }
