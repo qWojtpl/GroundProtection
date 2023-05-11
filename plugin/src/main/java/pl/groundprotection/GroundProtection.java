@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pl.groundprotection.commands.CommandHelper;
 import pl.groundprotection.commands.Commands;
 import pl.groundprotection.data.DataHandler;
+import pl.groundprotection.data.Messages;
 import pl.groundprotection.events.FieldBlockEvents;
 import pl.groundprotection.events.FieldProtectionEvents;
 import pl.groundprotection.fields.FieldsManager;
@@ -17,10 +18,12 @@ public final class GroundProtection extends JavaPlugin {
     private FieldsManager fieldsManager;
     private PermissionManager permissionManager;
     private DataHandler dataHandler;
+    private Messages messages;
 
     @Override
     public void onEnable() {
         main = this;
+        this.messages = new Messages();
         this.permissionManager = new PermissionManager();
         this.fieldsManager = new FieldsManager();
         this.dataHandler = new DataHandler();

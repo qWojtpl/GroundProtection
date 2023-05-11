@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
+import pl.groundprotection.data.Messages;
 import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldFlag;
 import pl.groundprotection.fields.FieldSchema;
@@ -25,6 +26,7 @@ import java.util.List;
 public class FieldProtectionEvents implements Listener {
 
     private final GroundProtection plugin = GroundProtection.getInstance();
+    private final Messages messages = plugin.getMessages();
     private final FieldsManager fieldsManager = plugin.getFieldsManager();
     private final DataHandler dataHandler = plugin.getDataHandler();
 
@@ -77,7 +79,7 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage("Can't use this");
+        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -108,7 +110,7 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage("Can't use this");
+        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -146,7 +148,7 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage("Can't damage this");
+        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantDamage"));
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -182,12 +184,12 @@ public class FieldProtectionEvents implements Listener {
                 if(event instanceof BlockPlaceEvent) {
                     BlockPlaceEvent ev1 = (BlockPlaceEvent) event;
                     ev1.setCancelled(true);
-                    p.sendMessage("Can't place this");
+                    p.sendMessage(messages.getMessage("cantPlace"));
                 }
                 if(event instanceof BlockBreakEvent) {
                     BlockBreakEvent ev2 = (BlockBreakEvent) event;
                     ev2.setCancelled(true);
-                    p.sendMessage("Can't break this");
+                    p.sendMessage(messages.getMessage("cantBreak"));
                 }
                 return;
             }

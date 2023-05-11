@@ -39,6 +39,7 @@ public class DataHandler {
         data = new YamlConfiguration();
         plugin.getFieldsManager().getFields().clear();
         plugin.getFieldsManager().getSchemas().clear();
+        plugin.getMessages().clearMessages();
         doorBlocks.clear();
         File configFile = getConfigFile();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
@@ -51,6 +52,7 @@ public class DataHandler {
         otherEntities = yml.getStringList("protectList.other_entities");
         loadFields();
         restoreFields();
+        loadMessages();
     }
 
     public void loadFields() {
@@ -149,6 +151,17 @@ public class DataHandler {
         }
     }
 
+    public void loadMessages() {
+        File messagesFile = getMessagesFile();
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(messagesFile);
+        ConfigurationSection section = yml.getConfigurationSection("messages");
+        if(section == null) return;
+        Messages messages = plugin.getMessages();
+        for(String key : section.getKeys(false)) {
+            messages.addMessage(key, yml.getString("messages." + key));
+        }
+    }
+
     public void save() {
         try {
             data.save(getDataFile());
@@ -167,7 +180,9 @@ public class DataHandler {
         location.add((int) field.getFieldLocation().getY());
         location.add((int) field.getFieldLocation().getZ());
         data.set(path + "location", location);
-        data.set(path + "world", field.getFieldLocation().getWorld().getName());
+        if(field.getFieldLocation().getWorld() != null) {
+            data.set(path + "world", field.getFieldLocation().getWorld().getName());
+        }
         saveLogin(field.getFieldOwner());
     }
 
@@ -199,6 +214,14 @@ public class DataHandler {
             plugin.saveResource("data.yml", false);
         }
         return dataFile;
+    }
+
+    public File getMessagesFile() {
+        File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
+        if(!messagesFile.exists()) {
+            plugin.saveResource("messages.yml", false);
+        }
+        return messagesFile;
     }
 
 }

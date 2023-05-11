@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import pl.groundprotection.GroundProtection;
+import pl.groundprotection.data.Messages;
 import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
@@ -22,6 +23,7 @@ import java.util.List;
 public class FieldBlockEvents implements Listener {
 
     private final GroundProtection plugin = GroundProtection.getInstance();
+    private final Messages messages = plugin.getMessages();
     private final FieldsManager fieldsManager = plugin.getFieldsManager();
 
     @EventHandler
@@ -31,13 +33,14 @@ public class FieldBlockEvents implements Listener {
         for(Field field : playerFields) {
             if(!p.hasPermission(field.getSchema().getPermission())) {
                 Location loc = field.getFieldLocation();
-                p.sendMessage("Removed your field " + field.getSchema().getName() + " at "
-                        + loc.getX() + ", "
-                        + loc.getY() + ", "
-                        + loc.getZ()
-                        + " because you lost permission "
-                        + field.getSchema().getPermission());
+                String location = loc.getX() + ", " + loc.getY() + ", " + loc.getZ();
+                p.sendMessage(
+                        messages.getPrefixedMessage("autoRemovedField"),
+                        field.getSchema().getName(),
+                        location,
+                        field.getSchema().getPermission());
                 fieldsManager.removeField(field, p);
+                continue;
             }
             plugin.getDataHandler().saveLogin(field);
         }
@@ -58,14 +61,14 @@ public class FieldBlockEvents implements Listener {
         }
         if(schema == null) return;
         if(schema.getDisabledWorlds().contains(p.getWorld().getName())) {
-            p.sendMessage("You cannot place field in this world");
+            p.sendMessage(messages.getPrefixedMessage("unavailableWorld"));
             event.setCancelled(true);
             return;
         }
         if(fieldsManager.canPlaceField(schema, p, event.getBlock().getLocation())) {
             fieldsManager.createField(schema, p, event.getBlock().getLocation());
         } else {
-            p.sendMessage("You cannot place field here");
+            p.sendMessage(messages.getPrefixedMessage("cannotPlaceField"));
             event.setCancelled(true);
         }
     }
@@ -85,7 +88,7 @@ public class FieldBlockEvents implements Listener {
         if(field.getFieldOwner().equals(p.getName())) {
             fieldsManager.removeField(field, p);
         } else {
-            p.sendMessage("You cannot destroy another player's field!");
+            p.sendMessage(messages.getPrefixedMessage("destroySomeoneField"));
             event.setCancelled(true);
         }
     }

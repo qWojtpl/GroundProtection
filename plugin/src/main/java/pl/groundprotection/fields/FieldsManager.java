@@ -5,8 +5,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
+import pl.groundprotection.data.Messages;
 
 import javax.annotation.Nullable;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 public class FieldsManager {
 
     private final GroundProtection plugin = GroundProtection.getInstance();
+    private final Messages messages = plugin.getMessages();
     private final HashMap<String, FieldSchema> schemas = new HashMap<>();
     private final List<Field> fields = new ArrayList<>();
 
@@ -50,7 +53,9 @@ public class FieldsManager {
                 if(field.getFieldOwner().equals(player.getName())) continue;
                 if(field.getFieldContributors().contains(player.getName())) continue;
             }
-            if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+            if(field.getFieldLocation().getWorld() != null) {
+                if (!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+            }
             if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) continue;
             if(getDistance(field.getFieldLocation(), location) > (schema.getSize()-1)/2 + (s.getSize()-1)/2) continue;
             return false;
@@ -70,7 +75,9 @@ public class FieldsManager {
     public List<Field> getFields(Location location) {
         List<Field> currentFields = new ArrayList<>();
         for(Field field : fields) {
-            if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+            if(field.getFieldLocation().getWorld() != null) {
+                if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+            }
             if(field.getFieldLocation().distance(location) > field.getSchema().getSize() * 2) continue;
             FieldSchema schema = field.getSchema();
             if(getDistance(field.getFieldLocation(), location) <= (schema.getSize() - 1) / 2) {
@@ -98,13 +105,13 @@ public class FieldsManager {
         DataHandler dataHandler = plugin.getDataHandler();
         dataHandler.setLastFieldID(dataHandler.getLastFieldID() + 1);
         Field field = new Field(dataHandler.getLastFieldID(), schema, location, owner.getName(), new ArrayList<>());
-        owner.sendMessage(schema.getName() + " placed.");
+        owner.sendMessage(MessageFormat.format(messages.getPrefixedMessage("placedField"), schema.getName()));
         fields.add(field);
         dataHandler.saveField(field);
     }
 
     public void removeField(Field field, Player player) {
-        player.sendMessage(field.getSchema().getName() + " removed.");
+        player.sendMessage(MessageFormat.format(messages.getPrefixedMessage("removedField"), field.getSchema().getName()));
         fields.remove(field);
         plugin.getDataHandler().removeField(String.valueOf(field.getID()));
     }

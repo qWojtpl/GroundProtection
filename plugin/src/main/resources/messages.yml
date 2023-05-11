@@ -1,0 +1,13 @@
+messages:
+  prefix: "&5[&bGroundProtection&5] "
+  placedField: "&aSuccessfully placed &e{0}"
+  removedField: "&cSuccessfully removed &e{0}"
+  unavailableWorld: "&cYou can't place this field in this world"
+  cannotPlaceField: "&cYou can't place field here"
+  noFieldFound: "&cNo fields found"
+  destroySomeoneField: "&cYou cannot destroy another player's field!"
+  autoRemovedField: "&cRemoved your field &e{0} &cat &e{1} &cbecause you lost permission &e{2}"
+  cantUse: "&cYou can't use this"
+  cantDamage: "&cYou can't damage it"
+  cantBreak: "&cYou can't break it"
+  cantPlace: "&cYou can't place it"
