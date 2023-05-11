@@ -47,8 +47,8 @@ public class FieldsManager {
         for(Field field : fields) {
             FieldSchema s = field.getSchema();
             if(plugin.getDataHandler().isFieldOverlap()) {
-                if (field.getFieldOwner().equals(player.getName())) continue;
-                if (field.getFieldContributors().contains(player.getName())) continue;
+                if(field.getFieldOwner().equals(player.getName())) continue;
+                if(field.getFieldContributors().contains(player.getName())) continue;
             }
             if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
             if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) continue;
@@ -133,6 +133,14 @@ public class FieldsManager {
             distance++;
         }
         return distance;
+    }
+
+    public boolean isAllowed(Location location, String player) {
+        for(Field field : plugin.getFieldsManager().getFields(location)) {
+            if(field.getFieldOwner().equals(player)) return true;
+            if(field.getFieldContributors().contains(player)) return true;
+        }
+        return false;
     }
 
 }

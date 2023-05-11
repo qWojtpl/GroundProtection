@@ -27,9 +27,10 @@ public class DataHandler {
     private boolean fieldOverlap;
     private List<String> doorBlocks = new ArrayList<>();
     private List<String> chestBlocks = new ArrayList<>();
+    private List<String> otherBlocks = new ArrayList<>();
     private List<String> animals = new ArrayList<>();
     private List<String> hostiles = new ArrayList<>();
-    private List<String> specialEntities = new ArrayList<>();
+    private List<String> otherEntities = new ArrayList<>();
     private YamlConfiguration data = new YamlConfiguration();
     @Setter
     private int lastFieldID = -1;
@@ -44,9 +45,10 @@ public class DataHandler {
         fieldOverlap = yml.getBoolean("config.fieldOverlap");
         doorBlocks = yml.getStringList("protectList.door_blocks");
         chestBlocks = yml.getStringList("protectList.chest_blocks");
+        otherBlocks = yml.getStringList("protectionList.other_blocks");
         animals = yml.getStringList("protectList.animals");
         hostiles = yml.getStringList("protectList.hostiles");
-        specialEntities = yml.getStringList("protectList.special_entities");
+        otherEntities = yml.getStringList("protectList.other_entities");
         loadFields();
         restoreFields();
     }

@@ -11,7 +11,8 @@ fields:
       - PROTECT_BLOCKS
       - PROTECT_DOORS
       - PROTECT_CHESTS
-      - PROTECT_SPECIAL_ENTITIES
+      - PROTECT_OTHER_ENTITIES
+      - PROTECT_OTHER_BLOCKS
       - PROTECT_ANIMALS
     disabledWorlds:
       - world_nether
@@ -70,6 +71,15 @@ protectList:
     - PURPLE_SHULKER_BOX
     - MAGENTA_SHULKER_BOX
     - PINK_SHULKER_BOX
+  other_blocks:
+    - STONE_BUTTON
+    - REPEATER
+    - COMPARATOR
+    - READSTONE_WIRE
+    - COMMAND_BLOCK
+    - CHAIN_COMMAND_BLOCK
+    - REPEATING_COMMAND_BLOCK
+    - STONE_PRESSURE_PLATE
   animals:
     - COW
     - PIG
@@ -138,7 +148,7 @@ protectList:
     - ZOMBIFIED_PIGLIN
     - ENDER_DRAGON
     - WITHER
-  special_entities:
+  other_entities:
     - CHEST_MINECART
     - OAK_CHEST_BOAT
     - SPRUCE_CHEST_BOAT
