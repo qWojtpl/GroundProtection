@@ -1,7 +1,11 @@
 package pl.groundprotection.fields;
 
 import lombok.Getter;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import pl.groundprotection.GroundProtection;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +13,7 @@ import java.util.List;
 @Getter
 public class FieldsManager {
 
+    private final GroundProtection plugin = GroundProtection.getInstance();
     private final HashMap<String, FieldSchema> schemas = new HashMap<>();
     private final List<Field> fields = new ArrayList<>();
 
@@ -22,6 +27,97 @@ public class FieldsManager {
 
     public void removeFieldSchema(String schema) {
         schemas.remove(schema);
+    }
+
+    @Nullable
+    public FieldFlag getFlag(String name) {
+        for(FieldFlag flag : FieldFlag.values()) {
+            if(flag.name().equals(name)) return flag;
+        }
+        return null;
+    }
+
+    public boolean canPlaceField(FieldSchema schema, Player player, Location location) {
+        for(Field field : fields) {
+            FieldSchema s = field.getSchema();
+            if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+            if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) continue;
+            if(getDistance(field.getFieldLocation(), location) > (schema.getSize()-1)/2 + (s.getSize()-1)/2) continue;
+            return false;
+        }
+        return true;
+    }
+
+    @Nullable
+    public Field getField(Location location) {
+        List<Field> fields = getFields(location);
+        if(fields.size() > 0) {
+            return fields.get(0);
+        }
+        return null;
+    }
+
+    public List<Field> getFields(Location location) {
+        List<Field> currentFields = new ArrayList<>();
+        for(Field field : fields) {
+            if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+            FieldSchema schema = field.getSchema();
+            if(getDistance(field.getFieldLocation(), location) <= (schema.getSize() - 1) / 2) {
+                currentFields.add(field);
+            }
+        }
+        return currentFields;
+    }
+
+    public List<Field> getPlayerFields(Player player) {
+        return getPlayerFields(player.getName());
+    }
+
+    public List<Field> getPlayerFields(String player) {
+        List<Field> playerFields = new ArrayList<>();
+        for(Field field : fields) {
+            if(field.getFieldOwner().equals(player)) {
+                playerFields.add(field);
+            }
+        }
+        return playerFields;
+    }
+
+    public void createField(FieldSchema schema, Player owner, Location location) {
+        Field field = new Field(schema, location, owner.getName(), new ArrayList<>());
+        owner.sendMessage(schema.getName() + " placed.");
+        fields.add(field);
+    }
+
+    public void removeField(Field field, Player player) {
+        player.sendMessage(field.getSchema().getName() + " removed.");
+        fields.remove(field);
+    }
+
+    public int getDistance(Location fieldLocation, Location requestedLocation) {
+        int distance = 0;
+        Location loc = new Location(fieldLocation.getWorld(),
+                fieldLocation.getX(),
+                fieldLocation.getY(),
+                fieldLocation.getZ());
+        Location req = new Location(requestedLocation.getWorld(),
+                (int) requestedLocation.getX(),
+                (int) requestedLocation.getY(),
+                (int) requestedLocation.getZ());
+        while(loc.getX() != req.getX() || loc.getZ() != req.getZ()) {
+            if(loc.getX() > req.getX()) {
+                loc.setX(loc.getX() - 1);
+            } else if(loc.getX() < req.getX()) {
+                loc.setX(loc.getX() + 1);
+            }
+            if(loc.getZ() > req.getZ()) {
+                loc.setZ(loc.getZ() - 1);
+            } else if(loc.getZ() < req.getZ()) {
+                loc.setZ(loc.getZ() + 1);
+            }
+            distance++;
+        }
+        return distance;
     }
 
 }

@@ -9,14 +9,14 @@ import java.util.List;
 public class FieldSchema {
 
     private final String name;
-    private final List<Integer> size;
+    private final int size;
     private final Material item;
     private final String permission;
-    private final List<FieldFlags> flags;
+    private final List<FieldFlag> flags;
     private final List<String> disabledWorlds;
     private final List<String> limits;
 
-    public FieldSchema(String name, List<Integer> size, Material item, String permission, List<FieldFlags> flags,
+    public FieldSchema(String name, int size, Material item, String permission, List<FieldFlag> flags,
                        List<String> disabledWorlds, List<String> limits) {
         this.name = name;
         this.size = size;

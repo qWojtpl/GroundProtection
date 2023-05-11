@@ -1,6 +1,6 @@
 package pl.groundprotection.fields;
 
-public enum FieldFlags {
+public enum FieldFlag {
 
     PROTECT_BLOCKS,
     PROTECT_DOORS,

@@ -2,6 +2,7 @@ package pl.groundprotection;
 
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
+import pl.groundprotection.api.GroundProtectionAPI;
 import pl.groundprotection.commands.CommandHelper;
 import pl.groundprotection.commands.Commands;
 import pl.groundprotection.data.DataHandler;

@@ -1,4 +1,6 @@
 package pl.groundprotection.api;
 
-public class GroundProtectionAPI {
+import pl.groundprotection.fields.FieldsManager;
+
+public class GroundProtectionAPI extends FieldsManager {
 }

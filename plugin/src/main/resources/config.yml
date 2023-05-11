@@ -2,10 +2,7 @@
 
 fields:
   cuboid:
-    size:
-      - 51
-      - 770
-      - 51
+    size: 51
     item: NOTE_BLOCK
     permission: gp.place.cuboid
     flags:
