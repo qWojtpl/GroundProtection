@@ -1,0 +1,21 @@
+
+
+fields:
+  cuboid:
+    size:
+      - 51
+      - 770
+      - 51
+    item: NOTE_BLOCK
+    permission: gp.place.cuboid
+    flags:
+      - PROTECT_BLOCKS
+      - PROTECT_DOORS
+      - PROTECT_CHESTS
+      - PROTECT_ANIMALS
+    disabledWorlds:
+      - world_nether
+      - world_the_end
+    limits:
+      - gp.place.cuboid:1
+      - member.vip:3

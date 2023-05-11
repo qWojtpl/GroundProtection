@@ -1,0 +1,10 @@
+name: GroundProtection
+version: '${project.version}'
+main: pl.groundprotection.GroundProtection
+api-version: 1.19
+authors: [Assasin98980]
+description: Create protection fields in your Minecraft server
+commands:
+  groundprotection:
+    usage: /<command>
+    description: Use GroundProtection plugin
