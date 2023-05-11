@@ -118,7 +118,7 @@ public class DataHandler {
             String path = "fields." + key + ".";
             FieldSchema schema = fieldsManager.getFieldSchema(yml.getString(path + "type"));
             if(schema == null) continue;
-            if(schema.getDaysToRemove() > DateManager.calculateDays(
+            if(schema.getDaysToRemove() < DateManager.calculateDays(
                     yml.getString(path + "lastOwnerLogin"), DateManager.getDate("/"), "/")) {
                 removeField(key);
                 continue;
@@ -129,7 +129,10 @@ public class DataHandler {
             String worldStr = yml.getString(path + "world");
             if(worldStr == null) continue;
             World w = plugin.getServer().getWorld(worldStr);
-            if(w == null) continue;
+            if(w == null) {
+                plugin.getLogger().info("Cannot find world: " + worldStr);
+                continue;
+            }
             Location loc = new Location(w, cords.get(0), cords.get(1), cords.get(2));
             Field field = new Field(
                     Integer.parseInt(key),

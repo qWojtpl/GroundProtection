@@ -19,6 +19,20 @@ fields:
     limits:
       - gp.place.cuboid:1
       - member.vip:3
+  nonPVP:
+    size: 21
+    item: ANVIL
+    permission: gp.place.nonpvp
+    removeAfterDays: 30
+    flags:
+      - PROTECT_HOSTILES
+      - PREVENT_PVP
+    disabledWorlds:
+      - world_nether
+      - world_the_end
+    limits:
+      - gp.place.nonpvp:1
+      - member.vip:10
 
 protectList:
   door_blocks:
@@ -57,5 +71,79 @@ protectList:
     - MAGENTA_SHULKER_BOX
     - PINK_SHULKER_BOX
   animals:
+    - COW
+    - PIG
+    - RABBIT
+    - WOLF
+    - BEE
+    - ALLAY
+    - AXOLOTL
+    - BAT
+    - CAT
+    - CHICKEN
+    - COD
+    - DOLPHIN
+    - DONKEY
+    - FOX
+    - FROG
+    - GLOW_SQUID
+    - GOAT
+    - HORSE
+    - IRON_GOLEM
+    - LLAMA
+    - MOOSHROM
+    - MULE
+    - OCELOT
+    - PANDA
+    - PARROT
+    - POLAR_BEAR
+    - PUFFERFISH
+    - SALMON
+    - SHEEP
+    - SKELETON_HORSE
+    - SNOW_GOLEM
+    - WANDERING_TRADER
+    - ZOMBIE_HORSE
   hostiles:
+    - BLAZE
+    - CAVE_SPIDER
+    - CREEPER
+    - DROWNED
+    - ELDER_GUARDIAN
+    - ENDERMAN
+    - ENDERMITE
+    - EVOKER
+    - GHAST
+    - GUARDIAN
+    - HOGLIN
+    - HUSK
+    - MAGMA_CUBE
+    - PHANTOM
+    - PIGLIN
+    - PIGLIN_BRUTE
+    - PILLAGER
+    - RAVAGER
+    - SHULKER
+    - SILVERFISH
+    - SKELETON
+    - SLIME
+    - SPIDER
+    - VINDICATOR
+    - WARDEN
+    - WITCH
+    - WITHER_SKELETON
+    - ZOGLIN
+    - ZOMBIE
+    - ZOMBIE_VILLAGER
+    - ZOMBIFIED_PIGLIN
+    - ENDER_DRAGON
+    - WITHER
   special_entities:
+    - CHEST_MINECART
+    - OAK_CHEST_BOAT
+    - SPRUCE_CHEST_BOAT
+    - BIRCH_CHEST_BOAT
+    - JUNGLE_CHEST_BOAT
+    - ACACIA_CHEST_BOAT
+    - DARK_OAK_CHEST_BOAT
+    - MANGROVE_CHEST_BOAT

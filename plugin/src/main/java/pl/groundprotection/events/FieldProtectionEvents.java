@@ -1,6 +1,7 @@
 package pl.groundprotection.events;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -9,9 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.material.Door;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
 import pl.groundprotection.fields.Field;
@@ -38,7 +39,7 @@ public class FieldProtectionEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onInteract(PlayerInteractEvent event) {
+    public void onInteractBlock(PlayerInteractEvent event) {
         if(event.isCancelled()) return;
         if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         if(event.getClickedBlock() == null) return;
@@ -51,16 +52,88 @@ public class FieldProtectionEvents implements Listener {
             if(schema.getFlags().contains(FieldFlag.PROTECT_DOORS)) {
                 if(dataHandler.getDoorBlocks().contains(event.getClickedBlock().getType().name())) {
                     event.setCancelled(true);
-                    p.sendMessage("Can't use this");
+                    break;
                 }
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_CHESTS)) {
                 if(dataHandler.getChestBlocks().contains(event.getClickedBlock().getType().name())) {
                     event.setCancelled(true);
-                    p.sendMessage("Can't use this");
+                    break;
                 }
             }
         }
+        if(event.isCancelled()) p.sendMessage("Can't use this");
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onInteractEntity(PlayerInteractEntityEvent event) {
+        if(event.isCancelled()) return;
+        Player p = event.getPlayer();
+        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        for(Field field : fields) {
+            FieldSchema schema = field.getSchema();
+            if(field.getFieldOwner().equals(p.getName())) continue;
+            if(field.getFieldContributors().contains(p.getName())) continue;
+            Entity clicked = event.getRightClicked();
+            if(schema.getFlags().contains(FieldFlag.PROTECT_ANIMALS)) {
+                if(dataHandler.getAnimals().contains(clicked.getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_HOSTILES)) {
+                if(dataHandler.getHostiles().contains(clicked.getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_SPECIAL_ENTITIES)) {
+                if(dataHandler.getSpecialEntities().contains(clicked.getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
+        if(event.isCancelled()) p.sendMessage("Can't use this");
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if(event.isCancelled()) return;
+        if(!(event.getDamager() instanceof Player)) return;
+        Player p = (Player) event.getDamager();
+        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        for(Field field : fields) {
+            FieldSchema schema = field.getSchema();
+            Entity victim = event.getEntity();
+            if(schema.getFlags().contains(FieldFlag.PREVENT_PVP)) {
+                if(victim instanceof Player) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(field.getFieldOwner().equals(p.getName())) continue;
+            if(field.getFieldContributors().contains(p.getName())) continue;
+            if(schema.getFlags().contains(FieldFlag.PROTECT_ANIMALS)) {
+                if(dataHandler.getAnimals().contains(victim.getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_HOSTILES)) {
+                if(dataHandler.getHostiles().contains(victim.getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_SPECIAL_ENTITIES)) {
+                if(dataHandler.getSpecialEntities().contains(victim.getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
+        if(event.isCancelled()) p.sendMessage("Can't damage this");
     }
 
     private void checkBlocks(Event event) {
@@ -86,12 +159,12 @@ public class FieldProtectionEvents implements Listener {
                 if(event instanceof BlockPlaceEvent) {
                     BlockPlaceEvent ev1 = (BlockPlaceEvent) event;
                     ev1.setCancelled(true);
-                    p.sendMessage("Can't use this");
+                    p.sendMessage("Can't break this");
                 }
                 if(event instanceof BlockBreakEvent) {
                     BlockBreakEvent ev2 = (BlockBreakEvent) event;
                     ev2.setCancelled(true);
-                    p.sendMessage("Can't use this");
+                    p.sendMessage("Can't break this");
                 }
                 return;
             }
