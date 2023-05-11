@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.fields.Field;
+import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
 
 import java.util.List;
@@ -41,6 +42,14 @@ public class Commands implements CommandExecutor {
                                 + (int) loc.getY() + ", "
                                 + (int) loc.getZ()
                                 + " (" + loc.getWorld().getName() + ")");
+                    }
+                } else if(args[0].equalsIgnoreCase("counts")) {
+                    for(String name : fieldsManager.getSchemas().keySet()) {
+                        FieldSchema schema = fieldsManager.getFieldSchema(name);
+                        if(schema == null) continue;
+                        int count = fieldsManager.getCurrentCount(schema, (Player) sender);
+                        int max = fieldsManager.getLimit(schema, (Player) sender);
+                        sender.sendMessage(schema.getName() + ": " + count + "/" + max);
                     }
                 }
             }

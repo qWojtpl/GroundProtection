@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
 import pl.groundprotection.data.Messages;
+import pl.groundprotection.util.PlayerUtil;
 
 import javax.annotation.Nullable;
 import java.text.MessageFormat;
@@ -101,6 +102,22 @@ public class FieldsManager {
         return playerFields;
     }
 
+    public List<Field> getPlayerFieldsBySchema(Player player, FieldSchema schema) {
+        return getPlayerFieldsBySchema(player.getName(), schema);
+    }
+
+    public List<Field> getPlayerFieldsBySchema(String player, FieldSchema schema) {
+        List<Field> playerFields = new ArrayList<>();
+        for(Field field : fields) {
+            if(field.getFieldOwner().equals(player)) {
+                if(field.getSchema().equals(schema)) {
+                    playerFields.add(field);
+                }
+            }
+        }
+        return playerFields;
+    }
+
     public void createField(FieldSchema schema, Player owner, Location location) {
         DataHandler dataHandler = plugin.getDataHandler();
         dataHandler.setLastFieldID(dataHandler.getLastFieldID() + 1);
@@ -148,6 +165,55 @@ public class FieldsManager {
             if(field.getFieldContributors().contains(player)) return true;
         }
         return false;
+    }
+
+    public boolean isReachedLimit(FieldSchema schema, Player player) {
+        return isReachedLimit(schema, player.getName());
+    }
+
+    public boolean isReachedLimit(FieldSchema schema, String player) {
+        if(getCurrentCount(schema, player) >= getLimit(schema, player)) return true;
+        return false;
+    }
+
+    public int getCurrentCount(FieldSchema schema, Player player) {
+        return getCurrentCount(schema, player.getName());
+    }
+
+    public int getCurrentCount(FieldSchema schema, String player) {
+        int count = 0;
+        for(Field field : fields) {
+            if(field.getFieldOwner().equals(player)) {
+                if(field.getSchema().getName().equals(schema.getName())) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public int getLimit(FieldSchema schema, Player player) {
+        int returnable = 0;
+        for(String limit : schema.getLimits()) {
+            String[] split = limit.split(":");
+            if(split.length != 2) continue;
+            if(player.hasPermission(split[0])) {
+                try {
+                    int a = Integer.parseInt(split[1]);
+                    if(a > returnable) {
+                        returnable = a;
+                    }
+                } catch(NumberFormatException e) {
+                    plugin.getLogger().severe("Cannot compare " + split[1] + " with a correct number! " +
+                            "(schema: " + schema.getName() + ", limit: " + limit + ")");
+                }
+            }
+        }
+        return returnable;
+    }
+
+    public int getLimit(FieldSchema schema, String player) {
+        return getLimit(schema, PlayerUtil.getPlayer(player));
     }
 
 }

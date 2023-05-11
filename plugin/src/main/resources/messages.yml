@@ -4,6 +4,7 @@ messages:
   removedField: "&cSuccessfully removed &e{0}"
   unavailableWorld: "&cYou can't place this field in this world"
   cannotPlaceField: "&cYou can't place field here"
+  reachedLimit: "&cYou\'ve reached this field limit (&e{0}&c&4/&e{0}&c)"
   noFieldFound: "&cNo fields found"
   destroySomeoneField: "&cYou cannot destroy another player's field!"
   autoRemovedField: "&cRemoved your field &e{0} &cat &e{1} &cbecause you lost permission &e{2}"

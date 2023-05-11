@@ -7,10 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.player.PlayerJoinEvent;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.Messages;
@@ -18,6 +15,7 @@ import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 public class FieldBlockEvents implements Listener {
@@ -33,12 +31,13 @@ public class FieldBlockEvents implements Listener {
         for(Field field : playerFields) {
             if(!p.hasPermission(field.getSchema().getPermission())) {
                 Location loc = field.getFieldLocation();
-                String location = loc.getX() + ", " + loc.getY() + ", " + loc.getZ();
-                p.sendMessage(
+                String location = (int) loc.getX() + ", " + (int) loc.getY() + ", " + (int) loc.getZ()
+                        + " (" + loc.getWorld().getName() + ")";
+                p.sendMessage(MessageFormat.format(
                         messages.getPrefixedMessage("autoRemovedField"),
                         field.getSchema().getName(),
                         location,
-                        field.getSchema().getPermission());
+                        field.getSchema().getPermission()));
                 fieldsManager.removeField(field, p);
                 continue;
             }
@@ -66,7 +65,13 @@ public class FieldBlockEvents implements Listener {
             return;
         }
         if(fieldsManager.canPlaceField(schema, p, event.getBlock().getLocation())) {
-            fieldsManager.createField(schema, p, event.getBlock().getLocation());
+            if(!fieldsManager.isReachedLimit(schema, p)) {
+                fieldsManager.createField(schema, p, event.getBlock().getLocation());
+            } else {
+                p.sendMessage(MessageFormat.format(messages.getPrefixedMessage("reachedLimit"),
+                        fieldsManager.getLimit(schema, p)));
+                event.setCancelled(true);
+            }
         } else {
             p.sendMessage(messages.getPrefixedMessage("cannotPlaceField"));
             event.setCancelled(true);
