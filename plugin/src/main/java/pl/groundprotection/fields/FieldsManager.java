@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import pl.groundprotection.GroundProtection;
+import pl.groundprotection.data.DataHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -40,6 +41,10 @@ public class FieldsManager {
     public boolean canPlaceField(FieldSchema schema, Player player, Location location) {
         for(Field field : fields) {
             FieldSchema s = field.getSchema();
+            if(plugin.getDataHandler().isFieldOverlap()) {
+                if (field.getFieldOwner().equals(player.getName())) continue;
+                if (field.getFieldContributors().contains(player.getName())) continue;
+            }
             if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
             if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) continue;
             if(getDistance(field.getFieldLocation(), location) > (schema.getSize()-1)/2 + (s.getSize()-1)/2) continue;
@@ -61,6 +66,7 @@ public class FieldsManager {
         List<Field> currentFields = new ArrayList<>();
         for(Field field : fields) {
             if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+            if(field.getFieldLocation().distance(location) > field.getSchema().getSize() * 2) continue;
             FieldSchema schema = field.getSchema();
             if(getDistance(field.getFieldLocation(), location) <= (schema.getSize() - 1) / 2) {
                 currentFields.add(field);

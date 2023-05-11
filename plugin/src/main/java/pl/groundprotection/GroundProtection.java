@@ -2,11 +2,11 @@ package pl.groundprotection;
 
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
-import pl.groundprotection.api.GroundProtectionAPI;
 import pl.groundprotection.commands.CommandHelper;
 import pl.groundprotection.commands.Commands;
 import pl.groundprotection.data.DataHandler;
-import pl.groundprotection.events.Events;
+import pl.groundprotection.events.FieldBlockEvents;
+import pl.groundprotection.events.FieldProtectionEvents;
 import pl.groundprotection.fields.FieldsManager;
 import pl.groundprotection.permissions.PermissionManager;
 
@@ -25,7 +25,8 @@ public final class GroundProtection extends JavaPlugin {
         this.fieldsManager = new FieldsManager();
         this.dataHandler = new DataHandler();
         dataHandler.loadConfig();
-        getServer().getPluginManager().registerEvents(new Events(), this);
+        getServer().getPluginManager().registerEvents(new FieldBlockEvents(), this);
+        getServer().getPluginManager().registerEvents(new FieldProtectionEvents(), this);
         getCommand("groundprotection").setExecutor(new Commands());
         getCommand("groundprotection").setTabCompleter(new CommandHelper());
         getLogger().info("Loaded.");

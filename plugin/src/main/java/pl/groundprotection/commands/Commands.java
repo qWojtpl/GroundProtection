@@ -1,5 +1,6 @@
 package pl.groundprotection.commands;
 
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -7,6 +8,8 @@ import org.bukkit.entity.Player;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldsManager;
+
+import java.util.List;
 
 public class Commands implements CommandExecutor {
 
@@ -23,6 +26,16 @@ public class Commands implements CommandExecutor {
                         sender.sendMessage("No fields found");
                     } else {
                         sender.sendMessage("Field owner: " + field.getFieldOwner());
+                    }
+                } else if(args[0].equalsIgnoreCase("locations")) {
+                    List<Field> fields = fieldsManager.getPlayerFields((Player) sender);
+                    for(Field field : fields) {
+                        Location loc = field.getFieldLocation();
+                        sender.sendMessage( field.getSchema().getName() + ": "
+                                + loc.getX() + ", "
+                                + loc.getY() + ", "
+                                + loc.getZ()
+                                + " (" + loc.getWorld().getName() + ")");
                     }
                 }
             }

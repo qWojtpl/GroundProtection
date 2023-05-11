@@ -8,3 +8,5 @@ commands:
   groundprotection:
     usage: /<command>
     description: Use GroundProtection plugin
+    aliases:
+      - gp

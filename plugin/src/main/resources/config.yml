@@ -1,4 +1,17 @@
-
+config:
+  fieldOverlap: true
+  doorBlocks:
+    - ACACIA_DOOR
+    - BAMBOO_DOOR
+    - BIRCH_DOOR
+    - CHERRY_DOOR
+    - CRIMSON_DOOR
+    - DARK_OAK_DOOR
+    - JUNGLE_DOOR
+    - MANGROVE_DOOR
+    - OAK_DOOR
+    - SPRUCE_DOOR
+    - WARPED_DOOR
 
 fields:
   cuboid:

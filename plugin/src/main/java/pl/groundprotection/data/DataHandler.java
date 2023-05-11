@@ -1,5 +1,6 @@
 package pl.groundprotection.data;
 
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,11 +12,21 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class DataHandler {
 
     private final GroundProtection plugin = GroundProtection.getInstance();
+    private boolean fieldOverlap;
+    private List<String> doorBlocks;
 
     public void loadConfig() {
+        plugin.getFieldsManager().getFields().clear();
+        plugin.getFieldsManager().getSchemas().clear();
+        doorBlocks.clear();
+        File configFile = getConfigFile();
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
+        fieldOverlap = yml.getBoolean("config.fieldOverlap");
+        doorBlocks = yml.getStringList("config.doorBlocks");
         loadFields();
     }
 
