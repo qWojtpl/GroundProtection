@@ -1,5 +1,6 @@
 package pl.groundprotection.events;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -9,6 +10,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.material.Door;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
@@ -39,6 +41,7 @@ public class FieldProtectionEvents implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         if(event.isCancelled()) return;
         if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
+        if(event.getClickedBlock() == null) return;
         Player p = event.getPlayer();
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
@@ -48,6 +51,13 @@ public class FieldProtectionEvents implements Listener {
             if(schema.getFlags().contains(FieldFlag.PROTECT_DOORS)) {
                 if(dataHandler.getDoorBlocks().contains(event.getClickedBlock().getType().name())) {
                     event.setCancelled(true);
+                    p.sendMessage("Can't use this");
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_CHESTS)) {
+                if(dataHandler.getChestBlocks().contains(event.getClickedBlock().getType().name())) {
+                    event.setCancelled(true);
+                    p.sendMessage("Can't use this");
                 }
             }
         }
@@ -76,10 +86,12 @@ public class FieldProtectionEvents implements Listener {
                 if(event instanceof BlockPlaceEvent) {
                     BlockPlaceEvent ev1 = (BlockPlaceEvent) event;
                     ev1.setCancelled(true);
+                    p.sendMessage("Can't use this");
                 }
                 if(event instanceof BlockBreakEvent) {
                     BlockBreakEvent ev2 = (BlockBreakEvent) event;
                     ev2.setCancelled(true);
+                    p.sendMessage("Can't use this");
                 }
                 return;
             }

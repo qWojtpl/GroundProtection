@@ -34,6 +34,7 @@ public final class GroundProtection extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        dataHandler.save();
         getLogger().info("Disabled.");
     }
 

@@ -1,14 +1,21 @@
 package pl.groundprotection.data;
 
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import pl.groundprotection.GroundProtection;
+import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldFlag;
 import pl.groundprotection.fields.FieldSchema;
+import pl.groundprotection.fields.FieldsManager;
+import pl.groundprotection.util.DateManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,18 +23,32 @@ import java.util.List;
 public class DataHandler {
 
     private final GroundProtection plugin = GroundProtection.getInstance();
+    private final FieldsManager fieldsManager = plugin.getFieldsManager();
     private boolean fieldOverlap;
-    private List<String> doorBlocks;
+    private List<String> doorBlocks = new ArrayList<>();
+    private List<String> chestBlocks = new ArrayList<>();
+    private List<String> animals = new ArrayList<>();
+    private List<String> hostiles = new ArrayList<>();
+    private List<String> specialEntities = new ArrayList<>();
+    private YamlConfiguration data = new YamlConfiguration();
+    @Setter
+    private int lastFieldID = -1;
 
     public void loadConfig() {
+        data = new YamlConfiguration();
         plugin.getFieldsManager().getFields().clear();
         plugin.getFieldsManager().getSchemas().clear();
         doorBlocks.clear();
         File configFile = getConfigFile();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
         fieldOverlap = yml.getBoolean("config.fieldOverlap");
-        doorBlocks = yml.getStringList("config.doorBlocks");
+        doorBlocks = yml.getStringList("protectList.door_blocks");
+        chestBlocks = yml.getStringList("protectList.chest_blocks");
+        animals = yml.getStringList("protectList.animals");
+        hostiles = yml.getStringList("protectList.hostiles");
+        specialEntities = yml.getStringList("protectList.special_entities");
         loadFields();
+        restoreFields();
     }
 
     public void loadFields() {
@@ -42,6 +63,7 @@ public class DataHandler {
                 plugin.getLogger().warning("Size in " + fieldName + " field must be an odd number, adding 1...");
                 size++;
             }
+            int daysToRemove = yml.getInt(path + "removeAfterDays");
             String materialStr = yml.getString(path + "item");
             if(materialStr == null) {
                 plugin.getLogger().severe("Cannot load " + fieldName + " field, because item is null");
@@ -73,10 +95,89 @@ public class DataHandler {
                     permission,
                     flags,
                     disabledWorlds,
-                    limits
+                    limits,
+                    daysToRemove
             );
-            plugin.getFieldsManager().addFieldSchema(schema);
+            fieldsManager.addFieldSchema(schema);
         }
+    }
+
+    public void restoreFields() {
+        File dataFile = getDataFile();
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(dataFile);
+        data = yml;
+        ConfigurationSection section = yml.getConfigurationSection("fields");
+        if(section == null) return;
+        for(String key : section.getKeys(false)) {
+            int id = 0;
+            try {
+                id = Integer.parseInt(key);
+            } catch(NumberFormatException e) {
+                plugin.getLogger().severe("Cannot compare " + key + " with a correct id-number!");
+            }
+            String path = "fields." + key + ".";
+            FieldSchema schema = fieldsManager.getFieldSchema(yml.getString(path + "type"));
+            if(schema == null) continue;
+            if(schema.getDaysToRemove() > DateManager.calculateDays(
+                    yml.getString(path + "lastOwnerLogin"), DateManager.getDate("/"), "/")) {
+                removeField(key);
+                continue;
+            }
+            String owner = yml.getString(path + "owner");
+            List<String> contributors = yml.getStringList(path + "contributors");
+            List<Integer> cords = yml.getIntegerList(path + "location");
+            String worldStr = yml.getString(path + "world");
+            if(worldStr == null) continue;
+            World w = plugin.getServer().getWorld(worldStr);
+            if(w == null) continue;
+            Location loc = new Location(w, cords.get(0), cords.get(1), cords.get(2));
+            Field field = new Field(
+                    Integer.parseInt(key),
+                    schema,
+                    loc,
+                    owner,
+                    contributors);
+            fieldsManager.getFields().add(field);
+            if(id > lastFieldID) {
+                lastFieldID = id;
+            }
+        }
+    }
+
+    public void save() {
+        try {
+            data.save(getDataFile());
+        } catch(IOException e) {
+            plugin.getLogger().severe("Cannot save data.yml: " + e.getMessage());
+        }
+    }
+
+    public void saveField(Field field) {
+        String path = "fields." + field.getID() + ".";
+        data.set(path + "type", field.getSchema().getName());
+        data.set(path + "owner", field.getFieldOwner());
+        data.set(path + "contributors", field.getFieldContributors());
+        List<Integer> location = new ArrayList<>();
+        location.add((int) field.getFieldLocation().getX());
+        location.add((int) field.getFieldLocation().getY());
+        location.add((int) field.getFieldLocation().getZ());
+        data.set(path + "location", location);
+        data.set(path + "world", field.getFieldLocation().getWorld().getName());
+        saveLogin(field.getFieldOwner());
+    }
+
+    public void removeField(String id) {
+        data.set("fields." + id, null);
+    }
+
+    public void saveLogin(String player) {
+        for(Field field : fieldsManager.getPlayerFields(player)) {
+            saveLogin(field);
+        }
+    }
+
+    public void saveLogin(Field field) {
+        data.set("fields." + field.getID() + ".lastOwnerLogin", DateManager.getDate("/"));
     }
 
     public File getConfigFile() {
@@ -85,6 +186,14 @@ public class DataHandler {
             plugin.saveResource("config.yml", false);
         }
         return configFile;
+    }
+
+    public File getDataFile() {
+        File dataFile = new File(plugin.getDataFolder(), "data.yml");
+        if(!dataFile.exists()) {
+            plugin.saveResource("data.yml", false);
+        }
+        return dataFile;
     }
 
 }

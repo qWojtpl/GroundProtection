@@ -15,9 +15,10 @@ public class FieldSchema {
     private final List<FieldFlag> flags;
     private final List<String> disabledWorlds;
     private final List<String> limits;
+    private final int daysToRemove;
 
     public FieldSchema(String name, int size, Material item, String permission, List<FieldFlag> flags,
-                       List<String> disabledWorlds, List<String> limits) {
+                       List<String> disabledWorlds, List<String> limits, int daysToRemove) {
         this.name = name;
         this.size = size;
         this.item = item;
@@ -25,6 +26,7 @@ public class FieldSchema {
         this.flags = flags;
         this.disabledWorlds = disabledWorlds;
         this.limits = limits;
+        this.daysToRemove = daysToRemove;
     }
 
 }

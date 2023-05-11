@@ -22,6 +22,11 @@ public class FieldsManager {
         schemas.put(schema.getName(), schema);
     }
 
+    @Nullable
+    public FieldSchema getFieldSchema(String name) {
+        return schemas.getOrDefault(name, null);
+    }
+
     public void removeFieldSchema(FieldSchema schema) {
         schemas.remove(schema.getName());
     }
@@ -90,14 +95,18 @@ public class FieldsManager {
     }
 
     public void createField(FieldSchema schema, Player owner, Location location) {
-        Field field = new Field(schema, location, owner.getName(), new ArrayList<>());
+        DataHandler dataHandler = plugin.getDataHandler();
+        dataHandler.setLastFieldID(dataHandler.getLastFieldID() + 1);
+        Field field = new Field(dataHandler.getLastFieldID(), schema, location, owner.getName(), new ArrayList<>());
         owner.sendMessage(schema.getName() + " placed.");
         fields.add(field);
+        dataHandler.saveField(field);
     }
 
     public void removeField(Field field, Player player) {
         player.sendMessage(field.getSchema().getName() + " removed.");
         fields.remove(field);
+        plugin.getDataHandler().removeField(String.valueOf(field.getID()));
     }
 
     public int getDistance(Location fieldLocation, Location requestedLocation) {

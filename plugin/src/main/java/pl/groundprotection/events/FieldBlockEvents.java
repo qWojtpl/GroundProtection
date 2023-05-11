@@ -1,5 +1,6 @@
 package pl.groundprotection.events;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -10,15 +11,37 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
 
+import java.util.List;
+
 public class FieldBlockEvents implements Listener {
 
     private final GroundProtection plugin = GroundProtection.getInstance();
     private final FieldsManager fieldsManager = plugin.getFieldsManager();
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        List<Field> playerFields = fieldsManager.getPlayerFields(p);
+        for(Field field : playerFields) {
+            if(!p.hasPermission(field.getSchema().getPermission())) {
+                Location loc = field.getFieldLocation();
+                p.sendMessage("Removed your field " + field.getSchema().getName() + " at "
+                        + loc.getX() + ", "
+                        + loc.getY() + ", "
+                        + loc.getZ()
+                        + " because you lost permission "
+                        + field.getSchema().getPermission());
+                fieldsManager.removeField(field, p);
+            }
+            plugin.getDataHandler().saveLogin(field);
+        }
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlaceField(BlockPlaceEvent event) {
