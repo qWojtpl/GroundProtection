@@ -122,10 +122,12 @@ public class DataHandler {
             String path = "fields." + key + ".";
             FieldSchema schema = fieldsManager.getFieldSchema(yml.getString(path + "type"));
             if(schema == null) continue;
-            if(schema.getDaysToRemove() < DateManager.calculateDays(
-                    yml.getString(path + "lastOwnerLogin"), DateManager.getDate("/"), "/")) {
-                removeField(key);
-                continue;
+            if(schema.getDaysToRemove() != 0) {
+                if (schema.getDaysToRemove() < DateManager.calculateDays(
+                        yml.getString(path + "lastOwnerLogin"), DateManager.getDate("/"), "/")) {
+                    removeField(key);
+                    continue;
+                }
             }
             String owner = yml.getString(path + "owner");
             List<String> contributors = yml.getStringList(path + "contributors");

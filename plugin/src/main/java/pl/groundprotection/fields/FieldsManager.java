@@ -75,6 +75,8 @@ public class FieldsManager {
 
     public List<Field> getFields(Location location) {
         List<Field> currentFields = new ArrayList<>();
+        location = location.clone().subtract(0, 1, 0);
+        location = location.getBlock().getLocation();
         for(Field field : fields) {
             if(field.getFieldLocation().getWorld() != null) {
                 if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
@@ -140,9 +142,9 @@ public class FieldsManager {
                 fieldLocation.getY(),
                 fieldLocation.getZ());
         Location req = new Location(requestedLocation.getWorld(),
-                (int) requestedLocation.getX(),
-                (int) requestedLocation.getY(),
-                (int) requestedLocation.getZ());
+                requestedLocation.getX(),
+                requestedLocation.getY(),
+                requestedLocation.getZ());
         while(loc.getX() != req.getX() || loc.getZ() != req.getZ()) {
             if(loc.getX() > req.getX()) {
                 loc.setX(loc.getX() - 1);
