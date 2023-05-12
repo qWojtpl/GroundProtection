@@ -1,5 +1,6 @@
 package pl.groundprotection.events;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -46,7 +47,7 @@ public class FieldProtectionEvents implements Listener {
         if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.PHYSICAL)) return;
         if(event.getClickedBlock() == null) return;
         Player p = event.getPlayer();
-        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        List<Field> fields = fieldsManager.getFields(event.getClickedBlock().getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
             if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
@@ -54,8 +55,10 @@ public class FieldProtectionEvents implements Listener {
             if(field.getFieldContributors().contains(p.getName())) continue;
             if(schema.getFlags().contains(FieldFlag.PREVENT_PLACE)) {
                 if(event.getItem() != null) {
-                    if(event.getItem().getType().name().toLowerCase().contains("_bucket")) {
+                    if(event.getItem().getType().name().toLowerCase().contains("_bucket") ||
+                            event.getItem().getType().equals(Material.BONE_MEAL)) {
                         event.setCancelled(true);
+                        event.setUseItemInHand(Event.Result.DENY);
                         break;
                     }
                 }
@@ -64,24 +67,35 @@ public class FieldProtectionEvents implements Listener {
                 if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
                         || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
                     event.setCancelled(true);
+                    event.setUseItemInHand(Event.Result.DENY);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_INTERACTABLE_BLOCKS)) {
+                if(event.getClickedBlock().getType().isInteractable()) {
+                    event.setCancelled(true);
+                    event.setUseInteractedBlock(Event.Result.DENY);
                     break;
                 }
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_DOORS)) {
                 if(dataHandler.getDoorBlocks().contains(event.getClickedBlock().getType().name())) {
                     event.setCancelled(true);
+                    event.setUseInteractedBlock(Event.Result.DENY);
                     break;
                 }
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_CHESTS)) {
                 if(dataHandler.getChestBlocks().contains(event.getClickedBlock().getType().name())) {
                     event.setCancelled(true);
+                    event.setUseInteractedBlock(Event.Result.DENY);
                     break;
                 }
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_OTHER_BLOCKS)) {
                 if(dataHandler.getOtherBlocks().contains(event.getClickedBlock().getType().name())) {
                     event.setCancelled(true);
+                    event.setUseInteractedBlock(Event.Result.DENY);
                     break;
                 }
             }
@@ -101,6 +115,13 @@ public class FieldProtectionEvents implements Listener {
             if(schema.getFlags().contains(FieldFlag.PREVENT_SPAWN_EGGS)) {
                 if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
                         || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PREVENT_NAME_TAGS)) {
+                if(p.getInventory().getItemInOffHand().getType().equals(Material.NAME_TAG)
+                        || p.getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
                     event.setCancelled(true);
                     break;
                 }

@@ -46,7 +46,7 @@ public class DataHandler {
         fieldOverlap = yml.getBoolean("config.fieldOverlap");
         doorBlocks = yml.getStringList("protectList.door_blocks");
         chestBlocks = yml.getStringList("protectList.chest_blocks");
-        otherBlocks = yml.getStringList("protectionList.other_blocks");
+        otherBlocks = yml.getStringList("protectList.other_blocks");
         animals = yml.getStringList("protectList.animals");
         hostiles = yml.getStringList("protectList.hostiles");
         otherEntities = yml.getStringList("protectList.other_entities");
