@@ -1,8 +1,7 @@
 package pl.groundprotection.events;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,6 +11,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import pl.groundprotection.GroundProtection;
@@ -195,6 +196,70 @@ public class FieldProtectionEvents implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onShoot(ProjectileLaunchEvent event) {
+        if(event.isCancelled()) return;
+        if(!(event.getEntity().getShooter() instanceof Player)) return;
+        Player p = (Player) event.getEntity().getShooter();
+        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_BOW)) {
+                if(event.getEntity() instanceof Arrow) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_FISHING_ROD)) {
+                if(event.getEntity() instanceof FishHook) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_POTIONS)) {
+                if(event.getEntity() instanceof ThrownPotion) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
+        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onFish(PlayerFishEvent event) {
+        if(event.isCancelled()) return;
+        if(event.getCaught() == null) return;
+        Player p = event.getPlayer();
+        List<Field> fields = fieldsManager.getFields(event.getCaught().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_FISHING_ROD)) {
+                event.setCancelled(true);
+                break;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PVP)) {
+                if(event.getCaught() instanceof Player) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PROTECT_ANIMALS)) {
+                if(dataHandler.getAnimals().contains(event.getCaught().getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PROTECT_HOSTILES)) {
+                if(dataHandler.getHostiles().contains(event.getCaught().getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
+        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
     }
 
     private void checkBlocks(Event event) {
