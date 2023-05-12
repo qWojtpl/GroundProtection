@@ -76,7 +76,7 @@ public class FieldVisualizer {
                     iterator = 0;
                 }
             }
-            for(int i = 0; i < field.getSchema().getSize() / 16; i++) {
+            for(int i = 0; i < 16; i++) {
                 if(locations.size() - 1 < iterator) break;
                 BlockData blockData = material.createBlockData();
                 Location blockChangeLoc = locations.get(iterator++);
@@ -104,7 +104,7 @@ public class FieldVisualizer {
                     iterator = 0;
                 }
             }
-            for(int i = 0; i < field.getSchema().getSize() / 16; i++) {
+            for(int i = 0; i < 16; i++) {
                 if(locations.size() - 1 < iterator) break;
                 Location blockChangeLoc = locations.get(iterator++);
                 blockChangeLoc.setY(yIterator);
