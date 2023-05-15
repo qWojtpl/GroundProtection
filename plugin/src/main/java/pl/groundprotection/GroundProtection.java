@@ -1,6 +1,7 @@
 package pl.groundprotection;
 
 import lombok.Getter;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import pl.groundprotection.commands.CommandHelper;
 import pl.groundprotection.commands.Commands;
@@ -30,8 +31,11 @@ public final class GroundProtection extends JavaPlugin {
         dataHandler.loadConfig();
         getServer().getPluginManager().registerEvents(new FieldBlockEvents(), this);
         getServer().getPluginManager().registerEvents(new FieldProtectionEvents(), this);
-        getCommand("groundprotection").setExecutor(new Commands());
-        getCommand("groundprotection").setTabCompleter(new CommandHelper());
+        PluginCommand command = getCommand("groundprotection");
+        if(command != null) {
+            command.setExecutor(new Commands());
+            command.setTabCompleter(new CommandHelper());
+        }
         getLogger().info("Loaded.");
     }
 

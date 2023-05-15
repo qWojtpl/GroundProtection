@@ -174,8 +174,7 @@ public class FieldsManager {
     }
 
     public boolean isReachedLimit(FieldSchema schema, String player) {
-        if(getCurrentCount(schema, player) >= getLimit(schema, player)) return true;
-        return false;
+        return (getCurrentCount(schema, player) >= getLimit(schema, player));
     }
 
     public int getCurrentCount(FieldSchema schema, Player player) {
