@@ -40,6 +40,7 @@ public class DataHandler {
         plugin.getFieldsManager().getFields().clear();
         plugin.getFieldsManager().getSchemas().clear();
         plugin.getMessages().clearMessages();
+        plugin.getPermissionManager().clearPermissions();
         doorBlocks.clear();
         File configFile = getConfigFile();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
@@ -53,6 +54,7 @@ public class DataHandler {
         loadFields();
         restoreFields();
         loadMessages();
+        loadPermissions();
     }
 
     public void loadFields() {
@@ -123,7 +125,7 @@ public class DataHandler {
             FieldSchema schema = fieldsManager.getFieldSchema(yml.getString(path + "type"));
             if(schema == null) continue;
             if(schema.getDaysToRemove() != 0) {
-                if (schema.getDaysToRemove() < DateManager.calculateDays(
+                if(schema.getDaysToRemove() < DateManager.calculateDays(
                         yml.getString(path + "lastOwnerLogin"), DateManager.getDate("/"), "/")) {
                     removeField(key);
                     continue;
@@ -164,6 +166,26 @@ public class DataHandler {
         }
     }
 
+    public void loadPermissions() {
+        File configFile = getConfigFile();
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
+        ConfigurationSection section = yml.getConfigurationSection("permissions");
+        if(section == null) return;
+        for(String key : section.getKeys(false)) {
+            String name = yml.getString("permissions." + key);
+            if(name != null) {
+                String[] descriptionArray = name.split("(?<=.)(?=\\p{Lu})");
+                String description = descriptionArray[0];
+                description = description.substring(0, 1).toUpperCase() + description.substring(1);
+                for(int i = 1; i < descriptionArray.length; i++) {
+                    description += " " + descriptionArray[i].toLowerCase();
+                }
+                description += " in GroundProtection plugin";
+                plugin.getPermissionManager().registerPermission(key, name, description);
+            }
+        }
+    }
+
     public void save() {
         try {
             data.save(getDataFile());
@@ -186,6 +208,11 @@ public class DataHandler {
             data.set(path + "world", field.getFieldLocation().getWorld().getName());
         }
         saveLogin(field.getFieldOwner());
+    }
+
+    public void saveFieldContributors(Field field) {
+        String path = "fields." + field.getID() + ".";
+        data.set(path + "contributors", field.getFieldContributors());
     }
 
     public void removeField(String id) {

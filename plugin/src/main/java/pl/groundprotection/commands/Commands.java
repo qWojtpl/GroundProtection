@@ -33,12 +33,7 @@ public class Commands implements CommandExecutor {
             }
             if(sender instanceof Player) {
                 if(args[0].equalsIgnoreCase("info")) {
-                    Field field = fieldsManager.getField(((Player) sender).getLocation());
-                    if(field == null) {
-                        sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
-                    } else {
-                        sender.sendMessage("Field owner: " + field.getFieldOwner());
-                    }
+                    fieldInfo((Player) sender);
                 } else if(args[0].equalsIgnoreCase("locations")) {
                     getLocations(sender, sender.getName());
                 } else if(args[0].equalsIgnoreCase("counts")) {
@@ -67,6 +62,15 @@ public class Commands implements CommandExecutor {
             showHelp(sender);
         }
         return true;
+    }
+
+    private void fieldInfo(Player sender) {
+        Field field = fieldsManager.getField((sender).getLocation());
+        if(field == null) {
+            sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+        } else {
+            sender.sendMessage("Field owner: " + field.getFieldOwner());
+        }
     }
 
     private void visualizeField(Player sender) {
@@ -138,42 +142,60 @@ public class Commands implements CommandExecutor {
     }
 
     private void allowPlayer(Player sender, String nickname) {
+        if(sender.getName().equals(nickname)) {
+            sender.sendMessage(messages.getPrefixedMessage("cantAllowYourself"));
+            return;
+        }
         if(PlayerUtil.getPlayer(nickname) == null) {
             sender.sendMessage(messages.getMessage("prefix") + "§cSorry, this player is not online!");
             return;
         }
         List<Field> fields = fieldsManager.getFields(sender.getLocation());
         int i = 0;
+        int j = 0;
         for(Field field : fields) {
             if(!field.getFieldOwner().equals(sender.getName())) continue;
             if(field.getFieldContributors().contains(nickname)) {
-                i++;
+                j++;
                 continue;
             }
-            field.getFieldContributors().add(nickname);
+            fieldsManager.addContributor(field, nickname);
             i++;
         }
         if(i == 0) {
-            sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+            if(j != 0) {
+                sender.sendMessage(messages.getPrefixedMessage("playerIsContributor"));
+            } else {
+                sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+            }
         } else {
             sender.sendMessage(MessageFormat.format(messages.getPrefixedMessage("allowedPlayer"), nickname, i));
         }
     }
 
     private void removePlayer(Player sender, String nickname) {
+        if(sender.getName().equals(nickname)) {
+            sender.sendMessage(messages.getPrefixedMessage("cantRemoveYourself"));
+            return;
+        }
         List<Field> fields = fieldsManager.getFields(sender.getLocation());
         int i = 0;
+        int j = 0;
         for(Field field : fields) {
             if(!field.getFieldOwner().equals(sender.getName())) continue;
             if(!field.getFieldContributors().contains(nickname)) {
-                i++;
+                j++;
                 continue;
             }
-            field.getFieldContributors().remove(nickname);
+            fieldsManager.removeContributor(field, nickname);
             i++;
         }
         if(i == 0) {
-            sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+            if(j != 0) {
+                sender.sendMessage(messages.getPrefixedMessage("playerIsNotContributor"));
+            } else {
+                sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+            }
         } else {
             sender.sendMessage(MessageFormat.format(messages.getPrefixedMessage("removedPlayer"), nickname, i));
         }
@@ -183,7 +205,7 @@ public class Commands implements CommandExecutor {
         sender.sendMessage("§5{========== §bGroundProtection §5==========}");
         sender.sendMessage(" ");
         sender.sendMessage("§5/§egp info §5- §bCheck owner of field that you're standing on");
-        sender.sendMessage("§5/§egp visualize §5- §bVisualize field. You must be an contributor or owner");
+        sender.sendMessage("§5/§egp visualize §5- §bVisualize field. You must be a contributor or owner");
         sender.sendMessage("§5/§egp locations §5- §bGet locations of your owned fields");
         sender.sendMessage("§5/§egp allow <nick> §5- §bAdd player as a contributor on fields that you're standing on");
         sender.sendMessage("§5/§egp remove <nick> §5- §bRemove contributor from fields that you're standing on");

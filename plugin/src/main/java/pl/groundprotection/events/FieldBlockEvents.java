@@ -59,6 +59,11 @@ public class FieldBlockEvents implements Listener {
             }
         }
         if(schema == null) return;
+        if(!p.hasPermission(schema.getPermission())) {
+            p.sendMessage(MessageFormat.format(messages.getPrefixedMessage("noPermission"), schema.getPermission()));
+            event.setCancelled(true);
+            return;
+        }
         if(schema.getDisabledWorlds().contains(p.getWorld().getName())) {
             p.sendMessage(messages.getPrefixedMessage("unavailableWorld"));
             event.setCancelled(true);

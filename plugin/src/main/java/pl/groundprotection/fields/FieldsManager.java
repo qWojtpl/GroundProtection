@@ -217,4 +217,15 @@ public class FieldsManager {
         return getLimit(schema, PlayerUtil.getPlayer(player));
     }
 
+    public void addContributor(Field field, String player) {
+        field.getFieldContributors().remove(player);
+        field.getFieldContributors().add(player);
+        plugin.getDataHandler().saveFieldContributors(field);
+    }
+
+    public void removeContributor(Field field, String player) {
+        field.getFieldContributors().remove(player);
+        plugin.getDataHandler().saveFieldContributors(field);
+    }
+
 }

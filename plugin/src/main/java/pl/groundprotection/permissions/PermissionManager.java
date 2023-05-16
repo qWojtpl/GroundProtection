@@ -10,21 +10,24 @@ public class PermissionManager {
     private final GroundProtection plugin = GroundProtection.getInstance();
     private final HashMap<String, Permission> permissions = new HashMap<>();
 
-    public Permission registerPermission(String name, String description) {
-        plugin.getServer().getPluginManager().removePermission(permissions.get(name));
+    public Permission registerPermission(String id, String name, String description) {
+        if(id == null || name == null) return null;
+        if(plugin.getServer().getPluginManager().getPermission(name) != null) {
+            plugin.getServer().getPluginManager().removePermission(permissions.get(name));
+        }
         Permission perm = new Permission(name, description);
-        permissions.put(name, perm);
+        permissions.put(id, perm);
         plugin.getServer().getPluginManager().addPermission(perm);
         return perm;
     }
 
-    public Permission getPermission(String name) {
-        return permissions.getOrDefault(name, null);
+    public Permission getPermission(String id) {
+        return permissions.getOrDefault(id, null);
     }
 
     public void clearPermissions() {
-        for(String name : permissions.keySet()) {
-            plugin.getServer().getPluginManager().removePermission(permissions.get(name));
+        for(String id : permissions.keySet()) {
+            plugin.getServer().getPluginManager().removePermission(permissions.get(id));
         }
         permissions.clear();
     }

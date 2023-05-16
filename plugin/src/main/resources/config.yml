@@ -1,6 +1,14 @@
 config:
   fieldOverlap: true
 
+permissions:
+  getFieldInfo: gp.info
+  visualizeField: gp.visualize
+  countFields: gp.counts
+  getFieldLocations: gp.locations
+  allowPlayer: gp.allow
+  removePlayer: gp.remove
+
 fields:
   cuboid:
     size: 51
