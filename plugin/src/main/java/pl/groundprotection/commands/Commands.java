@@ -42,13 +42,13 @@ public class Commands implements CommandExecutor {
                     visualizeField((Player) sender);
                 } else if(args[0].equalsIgnoreCase("allow")) {
                     if(args.length < 2) {
-                        sender.sendMessage(messages.getPrefixedMessage("mustProvidePlayer"));
+                        sender.sendMessage(messages.getMessage("mustProvidePlayer"));
                     } else {
                         allowPlayer((Player) sender, args[1]);
                     }
                 } else if(args[0].equalsIgnoreCase("remove")) {
                     if(args.length < 2) {
-                        sender.sendMessage(messages.getPrefixedMessage("mustProvidePlayer"));
+                        sender.sendMessage(messages.getMessage("mustProvidePlayer"));
                     } else {
                         removePlayer((Player) sender, args[1]);
                     }
@@ -67,9 +67,38 @@ public class Commands implements CommandExecutor {
     private void fieldInfo(Player sender) {
         Field field = fieldsManager.getField((sender).getLocation());
         if(field == null) {
-            sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+            sender.sendMessage(messages.getMessage("noFieldFound"));
         } else {
-            sender.sendMessage("Field owner: " + field.getFieldOwner());
+            String contributors = "";
+            if(field.getFieldContributors().size() > 0) {
+                contributors = field.getFieldContributors().get(0);
+                int i = 0;
+                for(String contributor : field.getFieldContributors()) {
+                    if(i == 0) {
+                        i++;
+                        continue;
+                    }
+                    contributors += ", " + contributor;
+                }
+            }
+            String location = locationBuilder(field.getFieldLocation());
+            if(field.getFieldOwner().equals(sender.getName()) || field.getFieldContributors().contains(sender.getName())) {
+                String message = messages.getMessage("fieldInfoContributor");
+                String[] split = message.split("%nl%");
+                for(String msg : split) {
+                    sender.sendMessage(MessageFormat.format(msg,
+                            field.getFieldOwner(),
+                            field.getSchema().getName(),
+                            contributors,
+                            location));
+                }
+            } else {
+                sender.sendMessage(MessageFormat.format(messages.getMessage("fieldInfo"),
+                        field.getFieldOwner(),
+                        field.getSchema().getName(),
+                        contributors,
+                        location));
+            }
         }
     }
 
@@ -98,9 +127,9 @@ public class Commands implements CommandExecutor {
             }
         }
         if(i == 0) {
-            sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+            sender.sendMessage(messages.getMessage("noFieldFound"));
         } else {
-            sender.sendMessage(messages.getPrefixedMessage("visualizing"));
+            sender.sendMessage(messages.getMessage("visualizing"));
         }
     }
 
@@ -131,11 +160,7 @@ public class Commands implements CommandExecutor {
             for(Field field : fields) {
                 if(!field.getSchema().equals(schema)) continue;
                 Location loc = field.getFieldLocation();
-                sender.sendMessage("§e" + field.getSchema().getName() + "§5: §b"
-                        + (int) loc.getX() + "§5, §b"
-                        + (int) loc.getY() + "§5, §b"
-                        + (int) loc.getZ()
-                        + ((loc.getWorld() != null) ? " §5(§b" + loc.getWorld().getName() + "§5)" : ""));
+                sender.sendMessage("§e" + field.getSchema().getName() + "§5: " + locationBuilder(loc));
             }
         }
         sender.sendMessage(" ");
@@ -143,7 +168,7 @@ public class Commands implements CommandExecutor {
 
     private void allowPlayer(Player sender, String nickname) {
         if(sender.getName().equals(nickname)) {
-            sender.sendMessage(messages.getPrefixedMessage("cantAllowYourself"));
+            sender.sendMessage(messages.getMessage("cantAllowYourself"));
             return;
         }
         if(PlayerUtil.getPlayer(nickname) == null) {
@@ -164,18 +189,18 @@ public class Commands implements CommandExecutor {
         }
         if(i == 0) {
             if(j != 0) {
-                sender.sendMessage(messages.getPrefixedMessage("playerIsContributor"));
+                sender.sendMessage(messages.getMessage("playerIsContributor"));
             } else {
-                sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+                sender.sendMessage(messages.getMessage("noFieldFound"));
             }
         } else {
-            sender.sendMessage(MessageFormat.format(messages.getPrefixedMessage("allowedPlayer"), nickname, i));
+            sender.sendMessage(MessageFormat.format(messages.getMessage("allowedPlayer"), nickname, i));
         }
     }
 
     private void removePlayer(Player sender, String nickname) {
         if(sender.getName().equals(nickname)) {
-            sender.sendMessage(messages.getPrefixedMessage("cantRemoveYourself"));
+            sender.sendMessage(messages.getMessage("cantRemoveYourself"));
             return;
         }
         List<Field> fields = fieldsManager.getFields(sender.getLocation());
@@ -192,12 +217,12 @@ public class Commands implements CommandExecutor {
         }
         if(i == 0) {
             if(j != 0) {
-                sender.sendMessage(messages.getPrefixedMessage("playerIsNotContributor"));
+                sender.sendMessage(messages.getMessage("playerIsNotContributor"));
             } else {
-                sender.sendMessage(messages.getPrefixedMessage("noFieldFound"));
+                sender.sendMessage(messages.getMessage("noFieldFound"));
             }
         } else {
-            sender.sendMessage(MessageFormat.format(messages.getPrefixedMessage("removedPlayer"), nickname, i));
+            sender.sendMessage(MessageFormat.format(messages.getMessage("removedPlayer"), nickname, i));
         }
     }
 
@@ -210,6 +235,14 @@ public class Commands implements CommandExecutor {
         sender.sendMessage("§5/§egp allow <nick> §5- §bAdd player as a contributor on fields that you're standing on");
         sender.sendMessage("§5/§egp remove <nick> §5- §bRemove contributor from fields that you're standing on");
         sender.sendMessage(" ");
+    }
+
+    private String locationBuilder(Location location) {
+        return "§b"
+                + (int) location.getX() + "§5, §b"
+                + (int) location.getY() + "§5, §b"
+                + (int) location.getZ()
+                + ((location.getWorld() != null) ? " §5(§b" + location.getWorld().getName() + "§5)" : "");
     }
 
 }

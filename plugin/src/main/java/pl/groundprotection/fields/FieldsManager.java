@@ -124,13 +124,13 @@ public class FieldsManager {
         DataHandler dataHandler = plugin.getDataHandler();
         dataHandler.setLastFieldID(dataHandler.getLastFieldID() + 1);
         Field field = new Field(dataHandler.getLastFieldID(), schema, location, owner.getName(), new ArrayList<>());
-        owner.sendMessage(MessageFormat.format(messages.getPrefixedMessage("placedField"), schema.getName()));
+        owner.sendMessage(MessageFormat.format(messages.getMessage("placedField"), schema.getName()));
         fields.add(field);
         dataHandler.saveField(field);
     }
 
     public void removeField(Field field, Player player) {
-        player.sendMessage(MessageFormat.format(messages.getPrefixedMessage("removedField"), field.getSchema().getName()));
+        player.sendMessage(MessageFormat.format(messages.getMessage("removedField"), field.getSchema().getName()));
         fields.remove(field);
         plugin.getDataHandler().removeField(String.valueOf(field.getID()));
     }

@@ -14,12 +14,12 @@ public class Messages {
     }
 
     public String getMessage(String key) {
-        return messages.getOrDefault(key, "null").replace("&", "§");
-    }
-
-    public String getPrefixedMessage(String key) {
-        return messages.getOrDefault("prefix", "> ").replace("&", "§") +
-                messages.getOrDefault(key, "null").replace("&", "§");
+        String message = messages.getOrDefault(key, "null").replace("&", "§");
+        if(message.contains("%prefix%")) {
+            message = message.replace("%prefix%", messages.getOrDefault("prefix", "> ")
+                    .replace("&", "§") );
+        }
+        return message;
     }
 
     public void clearMessages() {

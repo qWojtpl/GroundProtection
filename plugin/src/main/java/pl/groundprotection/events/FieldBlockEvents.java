@@ -34,7 +34,7 @@ public class FieldBlockEvents implements Listener {
                 String location = (int) loc.getX() + ", " + (int) loc.getY() + ", " + (int) loc.getZ()
                         + " (" + loc.getWorld().getName() + ")";
                 p.sendMessage(MessageFormat.format(
-                        messages.getPrefixedMessage("autoRemovedField"),
+                        messages.getMessage("autoRemovedField"),
                         field.getSchema().getName(),
                         location,
                         field.getSchema().getPermission()));
@@ -60,12 +60,12 @@ public class FieldBlockEvents implements Listener {
         }
         if(schema == null) return;
         if(!p.hasPermission(schema.getPermission())) {
-            p.sendMessage(MessageFormat.format(messages.getPrefixedMessage("noPermission"), schema.getPermission()));
+            p.sendMessage(MessageFormat.format(messages.getMessage("noPermission"), schema.getPermission()));
             event.setCancelled(true);
             return;
         }
         if(schema.getDisabledWorlds().contains(p.getWorld().getName())) {
-            p.sendMessage(messages.getPrefixedMessage("unavailableWorld"));
+            p.sendMessage(messages.getMessage("unavailableWorld"));
             event.setCancelled(true);
             return;
         }
@@ -73,12 +73,12 @@ public class FieldBlockEvents implements Listener {
             if(!fieldsManager.isReachedLimit(schema, p)) {
                 fieldsManager.createField(schema, p, event.getBlock().getLocation());
             } else {
-                p.sendMessage(MessageFormat.format(messages.getPrefixedMessage("reachedLimit"),
+                p.sendMessage(MessageFormat.format(messages.getMessage("reachedLimit"),
                         fieldsManager.getLimit(schema, p)));
                 event.setCancelled(true);
             }
         } else {
-            p.sendMessage(messages.getPrefixedMessage("cannotPlaceField"));
+            p.sendMessage(messages.getMessage("cannotPlaceField"));
             event.setCancelled(true);
         }
     }
@@ -98,7 +98,7 @@ public class FieldBlockEvents implements Listener {
         if(field.getFieldOwner().equals(p.getName())) {
             fieldsManager.removeField(field, p);
         } else {
-            p.sendMessage(messages.getPrefixedMessage("destroySomeoneField"));
+            p.sendMessage(messages.getMessage("destroySomeoneField"));
             event.setCancelled(true);
         }
     }
