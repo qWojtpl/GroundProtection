@@ -19,16 +19,20 @@ public class FieldVisualizer {
     private final Player player;
     private final Material material;
     private final int spaces;
+    private final int maxY;
+    private final int startY;
     private int task;
     private int rollbackTask;
     private int iterator = 0;
-    private int yIterator = -64;
+    private int yIterator;
 
     public FieldVisualizer(Field field, Player player, Material material, int spaces) {
         this.field = field;
         this.player = player;
         this.material = material;
         this.spaces = spaces;
+        this.maxY = (int) player.getLocation().getY() + spaces + 16;
+        this.startY = (int) player.getLocation().getY() - spaces - 16;
         visualizeField();
     }
 
@@ -66,9 +70,10 @@ public class FieldVisualizer {
             Location newLoc = new Location(wall.getWorld(), wall.getX(), 0, wall.getZ());
             locations.add(newLoc);
         }
+        yIterator = startY;
         task = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if(!player.isOnline() || iterator >= locations.size()) {
-                if(yIterator >= 320 - spaces) {
+                if(yIterator >= maxY) {
                     cancelTask();
                     return;
                 } else {
@@ -93,10 +98,10 @@ public class FieldVisualizer {
 
     private void rollback() {
         iterator = 0;
-        yIterator = -64;
+        yIterator = startY;
         rollbackTask = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if(!player.isOnline() || iterator >= locations.size()) {
-                if(yIterator >= 320 - spaces) {
+                if(yIterator >= maxY) {
                     cancelRollbackTask();
                     return;
                 } else {
