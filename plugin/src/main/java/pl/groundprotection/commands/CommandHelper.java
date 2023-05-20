@@ -29,6 +29,7 @@ public class CommandHelper implements TabCompleter {
             if(permissionManager.hasPermission(player, "countFields")) completions.add("counts");
             if(permissionManager.hasPermission(player, "allowPlayer")) completions.add("allow");
             if(permissionManager.hasPermission(player, "removePlayer")) completions.add("remove");
+            if(permissionManager.hasPermission(player, "reloadConfiguration")) completions.add("reload");
         } else if(args.length == 2) {
             if(permissionManager.hasPermission(player, "allowPlayer")
                     || permissionManager.hasPermission(player, "removePlayer")) {

@@ -23,6 +23,7 @@ permissions:
   allowPlayer: gp.allow
   removePlayer: gp.remove
   removeFieldIfNotOwner: gp.remove.bypass
+  reloadConfiguration: gp.reload
 
 fields:
   cuboid:

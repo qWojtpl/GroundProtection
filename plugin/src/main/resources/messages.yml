@@ -1,5 +1,6 @@
 messages:
   prefix: "&5[&bGroundProtection&5] "
+  reloaded: "%prefix%&aReloaded!"
   placedField: "%prefix%&aSuccessfully placed &e{0}"
   removedField: "%prefix%&cSuccessfully removed &e{0}"
   unavailableWorld: "%prefix%&cYou can't place this field in this world"
@@ -12,6 +13,7 @@ messages:
   mustProvidePlayer: "%prefix%&cYou must provide player in this command!"
   allowedPlayer: "%prefix%&aSuccessfully allowed &e{0}&a in &2(&e{1}&2)&a fields!"
   cantAllowYourself: "%prefix%&cYou can't allow yourself!"
+  playerNotOnline: "%prefix%&cSorry, this player is not online!"
   playerIsContributor: "%prefix%&cThis player is already contributing in all fields that you're standing on!"
   removedPlayer: "%prefix%&cSuccessfully removed &e{0}&c from &4(&e{1}&4)&c fields!"
   cantRemoveYourself: "%prefix%&cYou can't remove yourself!"

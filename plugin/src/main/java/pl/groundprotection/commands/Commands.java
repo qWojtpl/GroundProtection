@@ -30,11 +30,8 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length > 0) {
             if(args[0].equalsIgnoreCase("reload")) {
-                plugin.getDataHandler().save();
-                plugin.getDataHandler().loadConfig();
-                return true;
-            }
-            if(sender instanceof Player) {
+                reload(sender);
+            } else if(sender instanceof Player) {
                 if(args[0].equalsIgnoreCase("info")) {
                     fieldInfo((Player) sender);
                 } else if(args[0].equalsIgnoreCase("locations")) {
@@ -74,7 +71,7 @@ public class Commands implements CommandExecutor {
             sender.sendMessage(messages.getMessage("noFieldFound"));
         } else {
             for(Field field : fields) {
-                String contributors = "";
+                String contributors = "§4-";
                 if(field.getFieldContributors().size() > 0) {
                     contributors = field.getFieldContributors().get(0);
                     int i = 0;
@@ -107,6 +104,12 @@ public class Commands implements CommandExecutor {
                 }
             }
         }
+    }
+
+    private void reload(CommandSender sender) {
+        plugin.getDataHandler().save();
+        plugin.getDataHandler().loadConfig();;
+        sender.sendMessage(messages.getMessage("reloaded"));
     }
 
     private void visualizeField(Player sender) {
@@ -187,7 +190,7 @@ public class Commands implements CommandExecutor {
             return;
         }
         if(PlayerUtil.getPlayerFor(nickname, sender) == null) {
-            sender.sendMessage(messages.getMessage("prefix") + "§cSorry, this player is not online!");
+            sender.sendMessage(messages.getMessage("playerNotOnline"));
             return;
         }
         List<Field> fields = fieldsManager.getFields(sender.getLocation());
@@ -250,6 +253,9 @@ public class Commands implements CommandExecutor {
         sender.sendMessage("§5/§egp locations §5- §bGet locations of your owned fields");
         sender.sendMessage("§5/§egp allow <nick> §5- §bAdd player as a contributor on fields that you're standing on");
         sender.sendMessage("§5/§egp remove <nick> §5- §bRemove contributor from fields that you're standing on");
+        if(sender.hasPermission(permissionManager.getPermission("reloadConfiguration"))) {
+            sender.sendMessage("§5/§egp reload §5- §bReload configuration");
+        }
         sender.sendMessage(" ");
     }
 

@@ -1,6 +1,5 @@
 package pl.groundprotection.events;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -93,7 +92,8 @@ public class FieldBlockEvents implements Listener {
             }
         }
         if(field == null) return;
-        if(field.getFieldOwner().equals(p.getName())) {
+        if(field.getFieldOwner().equals(p.getName())
+                || p.hasPermission(plugin.getPermissionManager().getPermission("removeFieldIfNotOwner"))) {
             fieldsManager.removeField(field, p);
         } else {
             p.sendMessage(messages.getMessage("destroySomeoneField"));
