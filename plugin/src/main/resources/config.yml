@@ -1,4 +1,18 @@
+#    _____                           _ _____           _            _   _
+#   / ____|                         | |  __ \         | |          | | (_)
+#  | |  __ _ __ ___  _   _ _ __   __| | |__) | __ ___ | |_ ___  ___| |_ _  ___  _ __
+#  | | |_ | '__/ _ \| | | | '_ \ / _` |  ___/ '__/ _ \| __/ _ \/ __| __| |/ _ \| '_ \
+#  | |__| | | | (_) | |_| | | | | (_| | |   | | | (_) | ||  __/ (__| |_| | (_) | | | |
+#  \_____|_|  \___/ \__,_|_| |_|\__,_|_|   |_|  \___/ \__\___|\___|\__|_|\___/|_| |_|
+#
+# Config version: 1.0.0
+# Author: Assasin98980
+# GitHub: https://github.com/qWojtpl/GroundProtection
+
 config:
+
+  # Decide if field can overlap. If set to true, and you are owner of a field or a contributor,
+  # then two or more fields can overlap.
   fieldOverlap: true
 
 permissions:
@@ -8,6 +22,7 @@ permissions:
   getFieldLocations: gp.locations
   allowPlayer: gp.allow
   removePlayer: gp.remove
+  removeFieldIfNotOwner: gp.remove.bypass
 
 fields:
   cuboid:

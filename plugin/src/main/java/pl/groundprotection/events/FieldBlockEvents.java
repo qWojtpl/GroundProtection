@@ -14,6 +14,7 @@ import pl.groundprotection.data.Messages;
 import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
+import pl.groundprotection.util.LocationUtil;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -30,9 +31,7 @@ public class FieldBlockEvents implements Listener {
         List<Field> playerFields = fieldsManager.getPlayerFields(p);
         for(Field field : playerFields) {
             if(!p.hasPermission(field.getSchema().getPermission())) {
-                Location loc = field.getFieldLocation();
-                String location = (int) loc.getX() + ", " + (int) loc.getY() + ", " + (int) loc.getZ()
-                        + " (" + loc.getWorld().getName() + ")";
+                String location = LocationUtil.locationBuilder(field.getFieldLocation());
                 p.sendMessage(MessageFormat.format(
                         messages.getMessage("autoRemovedField"),
                         field.getSchema().getName(),

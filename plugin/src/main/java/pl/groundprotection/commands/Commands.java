@@ -12,6 +12,7 @@ import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldVisualizer;
 import pl.groundprotection.fields.FieldsManager;
+import pl.groundprotection.util.LocationUtil;
 import pl.groundprotection.util.PlayerUtil;
 
 import java.text.MessageFormat;
@@ -81,7 +82,7 @@ public class Commands implements CommandExecutor {
                     contributors += ", " + contributor;
                 }
             }
-            String location = locationBuilder(field.getFieldLocation());
+            String location = LocationUtil.locationBuilder(field.getFieldLocation());
             if(field.getFieldOwner().equals(sender.getName()) || field.getFieldContributors().contains(sender.getName())) {
                 String message = messages.getMessage("fieldInfoContributor");
                 String[] split = message.split("%nl%");
@@ -160,7 +161,7 @@ public class Commands implements CommandExecutor {
             for(Field field : fields) {
                 if(!field.getSchema().equals(schema)) continue;
                 Location loc = field.getFieldLocation();
-                sender.sendMessage("§e" + field.getSchema().getName() + "§5: " + locationBuilder(loc));
+                sender.sendMessage("§e" + field.getSchema().getName() + "§5: " + LocationUtil.locationBuilder(loc));
             }
         }
         sender.sendMessage(" ");
@@ -171,7 +172,7 @@ public class Commands implements CommandExecutor {
             sender.sendMessage(messages.getMessage("cantAllowYourself"));
             return;
         }
-        if(PlayerUtil.getPlayer(nickname) == null) {
+        if(PlayerUtil.getPlayerFor(nickname, sender) == null) {
             sender.sendMessage(messages.getMessage("prefix") + "§cSorry, this player is not online!");
             return;
         }
@@ -235,14 +236,6 @@ public class Commands implements CommandExecutor {
         sender.sendMessage("§5/§egp allow <nick> §5- §bAdd player as a contributor on fields that you're standing on");
         sender.sendMessage("§5/§egp remove <nick> §5- §bRemove contributor from fields that you're standing on");
         sender.sendMessage(" ");
-    }
-
-    private String locationBuilder(Location location) {
-        return "§b"
-                + (int) location.getX() + "§5, §b"
-                + (int) location.getY() + "§5, §b"
-                + (int) location.getZ()
-                + ((location.getWorld() != null) ? " §5(§b" + location.getWorld().getName() + "§5)" : "");
     }
 
 }

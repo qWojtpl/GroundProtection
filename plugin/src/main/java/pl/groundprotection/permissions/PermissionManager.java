@@ -1,5 +1,6 @@
 package pl.groundprotection.permissions;
 
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import pl.groundprotection.GroundProtection;
 
@@ -23,6 +24,10 @@ public class PermissionManager {
 
     public Permission getPermission(String id) {
         return permissions.getOrDefault(id, null);
+    }
+
+    public boolean hasPermission(Player player, String id) {
+        return player.hasPermission(getPermission(id));
     }
 
     public void clearPermissions() {

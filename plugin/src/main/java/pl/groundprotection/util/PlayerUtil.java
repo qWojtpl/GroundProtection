@@ -18,25 +18,33 @@ public class PlayerUtil {
         return null;
     }
 
-    public static List<Player> getPlayers(Player forPlayer) {
-        boolean sourcePlayerVanished = false;
-        for(MetadataValue meta : forPlayer.getMetadata("vanished")) {
+    @Nullable
+    public static Player getPlayerFor(String nickname, Player player) {
+        boolean sourcePlayerVanished = isVanished(player);
+        for(Player p : GroundProtection.getInstance().getServer().getOnlinePlayers()) {
+            if(!sourcePlayerVanished) {
+                if(isVanished(p)) continue;
+            }
+            if(p.getName().equals(nickname)) return p;
+        }
+        return null;
+    }
+
+    public static boolean isVanished(Player player) {
+        for(MetadataValue meta : player.getMetadata("vanished")) {
             if(meta.asBoolean()) {
-                sourcePlayerVanished = true;
-                break;
+                return true;
             }
         }
+        return false;
+    }
+
+    public static List<Player> getPlayers(Player forPlayer) {
+        boolean sourcePlayerVanished = isVanished(forPlayer);
         List<Player> playerList = new ArrayList<>();
         for(Player p : GroundProtection.getInstance().getServer().getOnlinePlayers()) {
             if(!sourcePlayerVanished) {
-                boolean vanished = false;
-                for(MetadataValue meta : p.getMetadata("vanished")) {
-                    if(meta.asBoolean()) {
-                        vanished = true;
-                        break;
-                    }
-                }
-                if(vanished) continue;
+                if(isVanished(p)) continue;
             }
             playerList.add(p);
         }
