@@ -16,7 +16,7 @@ messages:
   removedPlayer: "%prefix%&cSuccessfully removed &e{0}&c from &4(&e{1}&4)&c fields!"
   cantRemoveYourself: "%prefix%&cYou can't remove yourself!"
   playerIsNotContributor: "%prefix%&cThis player is not contributor in any of the fields that you're standing on!"
-  noPermission: "%prefix%&cYou don't have permission to do this! Missing: &e{0}&c."
+  noPermission: "%prefix%&cYou don't have permission to do this!"
   fieldInfo: "%prefix%&aField owner: &e{0}"
   fieldInfoContributor: "&aField owner: &e{0}%nl%&aType: &e{1}%nl%&aContributors: &e{2}%nl%&aLocation: {3}"
   cantUse: "&cYou can't use this"

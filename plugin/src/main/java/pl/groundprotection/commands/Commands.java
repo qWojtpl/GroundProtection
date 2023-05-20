@@ -12,6 +12,7 @@ import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldVisualizer;
 import pl.groundprotection.fields.FieldsManager;
+import pl.groundprotection.permissions.PermissionManager;
 import pl.groundprotection.util.LocationUtil;
 import pl.groundprotection.util.PlayerUtil;
 
@@ -23,6 +24,7 @@ public class Commands implements CommandExecutor {
     private final GroundProtection plugin = GroundProtection.getInstance();
     private final Messages messages = plugin.getMessages();
     private final FieldsManager fieldsManager = plugin.getFieldsManager();
+    private final PermissionManager permissionManager = plugin.getPermissionManager();
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -66,6 +68,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void fieldInfo(Player sender) {
+        if(!permissionManager.checkPermission(sender, "getFieldInfo")) return;
         List<Field> fields = fieldsManager.getFields((sender).getLocation());
         if(fields.size() == 0) {
             sender.sendMessage(messages.getMessage("noFieldFound"));
@@ -107,6 +110,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void visualizeField(Player sender) {
+        if(!permissionManager.checkPermission(sender, "visualizeField")) return;
         List<Field> fields = fieldsManager.getFields((sender).getLocation());
         final Material[] materials = new Material[]{
                 Material.RED_STAINED_GLASS,
@@ -138,6 +142,9 @@ public class Commands implements CommandExecutor {
     }
 
     private void countPlayerFields(CommandSender sender, String player) {
+        if(sender instanceof Player) {
+            if(!permissionManager.checkPermission((Player) sender, "countFields")) return;
+        }
         sender.sendMessage("§5{========== §b" + player + "'s fields §5==========}");
         sender.sendMessage(" ");
         for(String name : fieldsManager.getSchemas().keySet()) {
@@ -155,9 +162,12 @@ public class Commands implements CommandExecutor {
     }
 
     private void getLocations(CommandSender sender, String player) {
+        if(sender instanceof Player) {
+            if(!permissionManager.checkPermission((Player) sender, "getFieldLocations")) return;
+        }
         sender.sendMessage("§5{========== §b" + player + "'s fields §5==========}");
         sender.sendMessage(" ");
-        List<Field> fields = fieldsManager.getPlayerFields((Player) sender);
+        List<Field> fields = fieldsManager.getPlayerFields(player);
         for(String schemaKey : fieldsManager.getSchemas().keySet()) {
             FieldSchema schema = fieldsManager.getFieldSchema(schemaKey);
             if(schema == null) continue;
@@ -171,6 +181,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void allowPlayer(Player sender, String nickname) {
+        if(!permissionManager.checkPermission(sender, "allowPlayer")) return;
         if(sender.getName().equals(nickname)) {
             sender.sendMessage(messages.getMessage("cantAllowYourself"));
             return;
@@ -203,6 +214,7 @@ public class Commands implements CommandExecutor {
     }
 
     private void removePlayer(Player sender, String nickname) {
+        if(!permissionManager.checkPermission(sender, "removePlayer")) return;
         if(sender.getName().equals(nickname)) {
             sender.sendMessage(messages.getMessage("cantRemoveYourself"));
             return;

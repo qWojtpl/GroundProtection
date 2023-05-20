@@ -58,8 +58,7 @@ public class FieldBlockEvents implements Listener {
             }
         }
         if(schema == null) return;
-        if(!p.hasPermission(schema.getPermission())) {
-            p.sendMessage(MessageFormat.format(messages.getMessage("noPermission"), schema.getPermission()));
+        if(!plugin.getPermissionManager().checkPermission(p, schema.getPermission())) {
             event.setCancelled(true);
             return;
         }
