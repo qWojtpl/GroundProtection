@@ -24,6 +24,7 @@ permissions:
   removePlayer: gp.remove
   removeFieldIfNotOwner: gp.remove.bypass
   reloadConfiguration: gp.reload
+  bypassFieldProtection: gp.bypass
 
 fields:
   cuboid:

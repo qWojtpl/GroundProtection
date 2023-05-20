@@ -22,6 +22,7 @@ import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldFlag;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
+import pl.groundprotection.permissions.PermissionManager;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class FieldProtectionEvents implements Listener {
     private final Messages messages = plugin.getMessages();
     private final FieldsManager fieldsManager = plugin.getFieldsManager();
     private final DataHandler dataHandler = plugin.getDataHandler();
+    private final PermissionManager permissionManager = plugin.getPermissionManager();
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDestroy(BlockBreakEvent event) {
@@ -48,6 +50,7 @@ public class FieldProtectionEvents implements Listener {
         if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.PHYSICAL)) return;
         if(event.getClickedBlock() == null) return;
         Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
         List<Field> fields = fieldsManager.getFields(event.getClickedBlock().getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
@@ -108,6 +111,7 @@ public class FieldProtectionEvents implements Listener {
     public void onInteractEntity(PlayerInteractEntityEvent event) {
         if(event.isCancelled()) return;
         Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
@@ -154,6 +158,7 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) return;
         if(!(event.getDamager() instanceof Player)) return;
         Player p = (Player) event.getDamager();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
@@ -203,6 +208,7 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) return;
         if(!(event.getEntity().getShooter() instanceof Player)) return;
         Player p = (Player) event.getEntity().getShooter();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
             if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
@@ -233,6 +239,7 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) return;
         if(event.getCaught() == null) return;
         Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
         List<Field> fields = fieldsManager.getFields(event.getCaught().getLocation());
         for(Field field : fields) {
             if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
@@ -276,6 +283,7 @@ public class FieldProtectionEvents implements Listener {
             if(ev2.isCancelled()) canceled = true;
             p = ev2.getPlayer();
         }
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
         if(canceled) return;
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
