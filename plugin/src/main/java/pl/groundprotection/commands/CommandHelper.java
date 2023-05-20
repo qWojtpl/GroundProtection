@@ -18,6 +18,7 @@ public class CommandHelper implements TabCompleter {
         if(!(sender instanceof Player)) return null;
         List<String> completions = new ArrayList<>();
         if(args.length == 1) {
+            completions.add("info");
             completions.add("visualize");
             completions.add("locations");
             completions.add("counts");

@@ -66,39 +66,42 @@ public class Commands implements CommandExecutor {
     }
 
     private void fieldInfo(Player sender) {
-        Field field = fieldsManager.getField((sender).getLocation());
-        if(field == null) {
+        List<Field> fields = fieldsManager.getFields((sender).getLocation());
+        if(fields.size() == 0) {
             sender.sendMessage(messages.getMessage("noFieldFound"));
         } else {
-            String contributors = "";
-            if(field.getFieldContributors().size() > 0) {
-                contributors = field.getFieldContributors().get(0);
-                int i = 0;
-                for(String contributor : field.getFieldContributors()) {
-                    if(i == 0) {
-                        i++;
-                        continue;
+            for(Field field : fields) {
+                String contributors = "";
+                if(field.getFieldContributors().size() > 0) {
+                    contributors = field.getFieldContributors().get(0);
+                    int i = 0;
+                    for(String contributor : field.getFieldContributors()) {
+                        if(i == 0) {
+                            i++;
+                            continue;
+                        }
+                        contributors += ", " + contributor;
                     }
-                    contributors += ", " + contributor;
                 }
-            }
-            String location = LocationUtil.locationBuilder(field.getFieldLocation());
-            if(field.getFieldOwner().equals(sender.getName()) || field.getFieldContributors().contains(sender.getName())) {
-                String message = messages.getMessage("fieldInfoContributor");
-                String[] split = message.split("%nl%");
-                for(String msg : split) {
-                    sender.sendMessage(MessageFormat.format(msg,
+                String location = LocationUtil.locationBuilder(field.getFieldLocation());
+                if(field.getFieldOwner().equals(sender.getName()) || field.getFieldContributors().contains(sender.getName())) {
+                    String message = messages.getMessage("fieldInfoContributor");
+                    String[] split = message.split("%nl%");
+                    for(String msg : split) {
+                        sender.sendMessage(MessageFormat.format(msg,
+                                field.getFieldOwner(),
+                                field.getSchema().getName(),
+                                contributors,
+                                location));
+                    }
+                } else {
+                    sender.sendMessage(MessageFormat.format(messages.getMessage("fieldInfo"),
                             field.getFieldOwner(),
                             field.getSchema().getName(),
                             contributors,
                             location));
+                    return;
                 }
-            } else {
-                sender.sendMessage(MessageFormat.format(messages.getMessage("fieldInfo"),
-                        field.getFieldOwner(),
-                        field.getSchema().getName(),
-                        contributors,
-                        location));
             }
         }
     }
