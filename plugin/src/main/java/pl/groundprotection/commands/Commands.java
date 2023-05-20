@@ -31,13 +31,29 @@ public class Commands implements CommandExecutor {
         if(args.length > 0) {
             if(args[0].equalsIgnoreCase("reload")) {
                 reload(sender);
+            } else if(args[0].equalsIgnoreCase("locations")) {
+                if(args.length > 1) {
+                    if(sender.hasPermission(permissionManager.getPermission("getOtherPlayerFieldLocations"))) {
+                        getLocations(sender, args[1]);
+                    } else {
+                        getLocations(sender, sender.getName());
+                    }
+                } else {
+                    getLocations(sender, sender.getName());
+                }
+            } else if(args[0].equalsIgnoreCase("counts")) {
+                if(args.length > 1) {
+                    if(sender.hasPermission(permissionManager.getPermission("countOtherPlayerFields"))) {
+                        countPlayerFields(sender, args[1]);
+                    } else {
+                        countPlayerFields(sender, sender.getName());
+                    }
+                } else {
+                    countPlayerFields(sender, sender.getName());
+                }
             } else if(sender instanceof Player) {
                 if(args[0].equalsIgnoreCase("info")) {
                     fieldInfo((Player) sender);
-                } else if(args[0].equalsIgnoreCase("locations")) {
-                    getLocations(sender, sender.getName());
-                } else if(args[0].equalsIgnoreCase("counts")) {
-                    countPlayerFields(sender, sender.getName());
                 } else if(args[0].equalsIgnoreCase("visualize")) {
                     visualizeField((Player) sender);
                 } else if(args[0].equalsIgnoreCase("allow")) {
@@ -147,6 +163,15 @@ public class Commands implements CommandExecutor {
     private void countPlayerFields(CommandSender sender, String player) {
         if(sender instanceof Player) {
             if(!permissionManager.checkPermission((Player) sender, "countFields")) return;
+        } else {
+            if(player.equals("CONSOLE")) {
+                sender.sendMessage(messages.getMessage("mustProvidePlayer"));
+                return;
+            }
+        }
+        if(PlayerUtil.getPlayer(player) == null) {
+            sender.sendMessage(messages.getMessage("playerNotOnline"));
+            return;
         }
         sender.sendMessage("§5{========== §b" + player + "'s fields §5==========}");
         sender.sendMessage(" ");
@@ -167,6 +192,11 @@ public class Commands implements CommandExecutor {
     private void getLocations(CommandSender sender, String player) {
         if(sender instanceof Player) {
             if(!permissionManager.checkPermission((Player) sender, "getFieldLocations")) return;
+        } else {
+            if(player.equals("CONSOLE")) {
+                sender.sendMessage(messages.getMessage("mustProvidePlayer"));
+                return;
+            }
         }
         sender.sendMessage("§5{========== §b" + player + "'s fields §5==========}");
         sender.sendMessage(" ");

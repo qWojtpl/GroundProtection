@@ -19,7 +19,9 @@ permissions:
   getFieldInfo: gp.info
   visualizeField: gp.visualize
   countFields: gp.counts
+  countOtherPlayerFields: gp.counts.other
   getFieldLocations: gp.locations
+  getOtherPlayerFieldLocations: gp.locations.other
   allowPlayer: gp.allow
   removePlayer: gp.remove
   removeFieldIfNotOwner: gp.remove.bypass
