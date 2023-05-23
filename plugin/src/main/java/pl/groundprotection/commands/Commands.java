@@ -100,7 +100,9 @@ public class Commands implements CommandExecutor {
                     }
                 }
                 String location = LocationUtil.locationBuilder(field.getFieldLocation());
-                if(field.getFieldOwner().equals(sender.getName()) || field.getFieldContributors().contains(sender.getName())) {
+                if(field.getFieldOwner().equals(sender.getName()) ||
+                        field.getFieldContributors().contains(sender.getName()) ||
+                        sender.hasPermission(permissionManager.getPermission("alwaysGetAccurateFieldInfo"))) {
                     String message = messages.getMessage("fieldInfoContributor");
                     String[] split = message.split("%nl%");
                     for(String msg : split) {
@@ -123,6 +125,9 @@ public class Commands implements CommandExecutor {
     }
 
     private void reload(CommandSender sender) {
+        if(sender instanceof Player) {
+            if (!permissionManager.checkPermission((Player) sender, "reloadConfiguration")) return;
+        }
         plugin.getDataHandler().save();
         plugin.getDataHandler().loadConfig();;
         sender.sendMessage(messages.getMessage("reloaded"));
@@ -144,7 +149,8 @@ public class Commands implements CommandExecutor {
         int j = 0;
         for(Field field : fields) {
             if(field.getFieldOwner().equalsIgnoreCase(sender.getName()) ||
-                    field.getFieldContributors().contains(sender.getName())) {
+                    field.getFieldContributors().contains(sender.getName()) ||
+                    sender.hasPermission(permissionManager.getPermission("alwaysVisualizeField"))) {
                 i++;
                 new FieldVisualizer(field, sender, materials[j], 16 + (2 * i));
                 j++;

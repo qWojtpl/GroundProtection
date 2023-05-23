@@ -17,7 +17,9 @@ config:
 
 permissions:
   getFieldInfo: gp.info
+  alwaysGetAccurateFieldInfo: gp.info.bypass
   visualizeField: gp.visualize
+  alwaysVisualizeField: gp.visualize.bypass
   countFields: gp.counts
   countOtherPlayerFields: gp.counts.other
   getFieldLocations: gp.locations
