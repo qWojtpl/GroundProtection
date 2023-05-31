@@ -137,14 +137,8 @@ public class FieldsManager {
 
     public int getDistance(Location fieldLocation, Location requestedLocation) {
         int distance = 0;
-        Location loc = new Location(fieldLocation.getWorld(),
-                fieldLocation.getX(),
-                fieldLocation.getY(),
-                fieldLocation.getZ());
-        Location req = new Location(requestedLocation.getWorld(),
-                requestedLocation.getX(),
-                requestedLocation.getY(),
-                requestedLocation.getZ());
+        Location loc = fieldLocation.clone();
+        Location req = requestedLocation.clone();
         while(loc.getX() != req.getX() || loc.getZ() != req.getZ()) {
             if(loc.getX() > req.getX()) {
                 loc.setX(loc.getX() - 1);
