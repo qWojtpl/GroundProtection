@@ -8,10 +8,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import pl.groundprotection.GroundProtection;
-import pl.groundprotection.fields.Field;
-import pl.groundprotection.fields.FieldFlag;
-import pl.groundprotection.fields.FieldSchema;
-import pl.groundprotection.fields.FieldsManager;
+import pl.groundprotection.fields.*;
 import pl.groundprotection.util.DateManager;
 
 import java.io.File;
@@ -70,7 +67,7 @@ public class DataHandler {
                 size++;
             }
             int daysToRemove = yml.getInt(path + "removeAfterDays");
-            String materialStr = yml.getString(path + "item");
+            String materialStr = yml.getString(path + "item.material");
             if(materialStr == null) {
                 plugin.getLogger().severe("Cannot load " + fieldName + " field, because item is null");
                 continue;
@@ -81,6 +78,10 @@ public class DataHandler {
                 plugin.getLogger().severe("Cannot load " + fieldName + " field");
                 continue;
             }
+            FieldItem item = new FieldItem(
+                    material,
+                    yml.getString(path + "item.name", ""),
+                    yml.getStringList(path + "item.lore"));
             String permission = yml.getString(path + "permission");
             List<String> flagsStr = yml.getStringList(path + "flags");
             List<FieldFlag> flags = new ArrayList<>();
@@ -97,7 +98,7 @@ public class DataHandler {
             FieldSchema schema = new FieldSchema(
                     fieldName,
                     size,
-                    material,
+                    item,
                     permission,
                     flags,
                     disabledWorlds,

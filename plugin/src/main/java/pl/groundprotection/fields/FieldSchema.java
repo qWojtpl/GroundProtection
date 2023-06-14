@@ -10,14 +10,14 @@ public class FieldSchema {
 
     private final String name;
     private final int size;
-    private final Material item;
+    private final FieldItem item;
     private final String permission;
     private final List<FieldFlag> flags;
     private final List<String> disabledWorlds;
     private final List<String> limits;
     private final int daysToRemove;
 
-    public FieldSchema(String name, int size, Material item, String permission, List<FieldFlag> flags,
+    public FieldSchema(String name, int size, FieldItem item, String permission, List<FieldFlag> flags,
                        List<String> disabledWorlds, List<String> limits, int daysToRemove) {
         this.name = name;
         this.size = size;

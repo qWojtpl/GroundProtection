@@ -68,6 +68,12 @@ public class Commands implements CommandExecutor {
                     } else {
                         removePlayer((Player) sender, args[1]);
                     }
+                } else if(args[0].equalsIgnoreCase("get")) {
+                    if(args.length < 2) {
+                        sender.sendMessage(messages.getMessage("provideField"));
+                    } else {
+                        giveField((Player) sender, args[1]);
+                    }
                 } else {
                     showHelp(sender);
                 }
@@ -279,6 +285,17 @@ public class Commands implements CommandExecutor {
         } else {
             sender.sendMessage(MessageFormat.format(messages.getMessage("removedPlayer"), nickname, i));
         }
+    }
+
+    private void giveField(Player sender, String fieldName) {
+        if(!permissionManager.checkPermission(sender, "getFieldItem")) return;
+        FieldSchema schema = fieldsManager.getFieldSchema(fieldName);
+        if(schema == null) {
+            sender.sendMessage(messages.getMessage("notFoundField"));
+            return;
+        }
+        sender.getInventory().addItem(schema.getItem().getItemStack());
+        sender.sendMessage(messages.getMessage("fieldGiven"));
     }
 
     private void showHelp(CommandSender sender) {

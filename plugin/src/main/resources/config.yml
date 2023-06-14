@@ -26,14 +26,16 @@ permissions:
   getOtherPlayerFieldLocations: gp.locations.other
   allowPlayer: gp.allow
   removePlayer: gp.remove
-  removeFieldIfNotOwner: gp.remove.bypass
+  removeFieldIfNotOwner: gp.destroy.bypass
   reloadConfiguration: gp.reload
   bypassFieldProtection: gp.bypass
+  getFieldItem: gp.give
 
 fields:
   cuboid:
     size: 51
-    item: NOTE_BLOCK
+    item:
+      material: NOTE_BLOCK
     permission: gp.place.cuboid
     removeAfterDays: 30
     flags:
@@ -52,7 +54,8 @@ fields:
       - member.vip:3
   nonPVP:
     size: 21
-    item: ANVIL
+    item:
+      material: ANVIL
     permission: gp.place.nonpvp
     removeAfterDays: 30
     flags:

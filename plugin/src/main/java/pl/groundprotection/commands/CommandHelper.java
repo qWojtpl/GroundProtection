@@ -6,6 +6,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import pl.groundprotection.GroundProtection;
+import pl.groundprotection.fields.Field;
 import pl.groundprotection.permissions.PermissionManager;
 import pl.groundprotection.util.PlayerUtil;
 
@@ -30,12 +31,20 @@ public class CommandHelper implements TabCompleter {
             if(permissionManager.hasPermission(player, "allowPlayer")) completions.add("allow");
             if(permissionManager.hasPermission(player, "removePlayer")) completions.add("remove");
             if(permissionManager.hasPermission(player, "reloadConfiguration")) completions.add("reload");
+            if(permissionManager.hasPermission(player, "getFieldItem")) completions.add("get");
         } else if(args.length == 2) {
             if(permissionManager.hasPermission(player, "allowPlayer")
                     || permissionManager.hasPermission(player, "removePlayer")) {
-                if (args[0].equalsIgnoreCase("allow") || args[0].equalsIgnoreCase("remove")) {
+                if(args[0].equalsIgnoreCase("allow") || args[0].equalsIgnoreCase("remove")) {
                     for (Player p : PlayerUtil.getPlayers((Player) sender)) {
                         completions.add(p.getName());
+                    }
+                }
+            }
+            if(permissionManager.hasPermission(player, "getFieldItem")) {
+                if(args[0].equalsIgnoreCase("get")) {
+                    for(String schemaName : plugin.getFieldsManager().getSchemas().keySet()) {
+                        completions.add(schemaName);
                     }
                 }
             }

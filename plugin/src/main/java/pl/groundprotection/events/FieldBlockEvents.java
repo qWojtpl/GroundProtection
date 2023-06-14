@@ -8,9 +8,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.Messages;
 import pl.groundprotection.fields.Field;
+import pl.groundprotection.fields.FieldItem;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
 import pl.groundprotection.util.LocationUtil;
@@ -48,10 +51,25 @@ public class FieldBlockEvents implements Listener {
         if(event.isCancelled()) return;
         Player p = event.getPlayer();
         if(p.isSneaking()) return;
-        Material itemType = p.getInventory().getItemInMainHand().getType();
+        ItemStack item = p.getInventory().getItemInMainHand();
         FieldSchema schema = null;
         for(String name : fieldsManager.getSchemas().keySet()) {
-            if(fieldsManager.getSchemas().get(name).getItem().equals(itemType)) {
+            FieldItem fieldItem = fieldsManager.getSchemas().get(name).getItem();
+            if(fieldItem.getMaterial().equals(item.getType())) {
+                ItemMeta im = item.getItemMeta();
+                if(im != null) {
+                    if(!im.getDisplayName().equals(fieldItem.getName())) {
+                        continue;
+                    }
+                    if(fieldItem.getLore().size() > 0) {
+                        if(im.getLore() == null) {
+                            continue;
+                        }
+                        if(!im.getLore().equals(fieldItem.getLore())) {
+                            continue;
+                        }
+                    }
+                }
                 schema = fieldsManager.getSchemas().get(name);
                 break;
             }
@@ -92,12 +110,14 @@ public class FieldBlockEvents implements Listener {
             }
         }
         if(field == null) return;
+        event.setCancelled(true);
         if(field.getFieldOwner().equals(p.getName())
                 || p.hasPermission(plugin.getPermissionManager().getPermission("removeFieldIfNotOwner"))) {
             fieldsManager.removeField(field, p);
+            event.getBlock().setType(Material.AIR);
+            event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), field.getSchema().getItem().getItemStack());
         } else {
             p.sendMessage(messages.getMessage("destroySomeoneField"));
-            event.setCancelled(true);
         }
     }
 
