@@ -137,7 +137,7 @@ public class FieldBlockEvents implements Listener {
     public void onTakeField(BlockPistonRetractEvent event) {
         for(Field f : fieldsManager.getFields()) {
             for(Block b : event.getBlocks()) {
-                if (f.getFieldLocation().equals(b.getLocation())) {
+                if(f.getFieldLocation().equals(b.getLocation())) {
                     event.setCancelled(true);
                     return;
                 }

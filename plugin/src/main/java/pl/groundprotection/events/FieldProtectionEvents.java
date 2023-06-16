@@ -1,16 +1,15 @@
 package pl.groundprotection.events;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -36,27 +35,69 @@ public class FieldProtectionEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDestroy(BlockBreakEvent event) {
-        checkBlocks(event);
+        if(event.isCancelled()) {
+            return;
+        }
+        Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
+                event.setCancelled(true);
+                p.sendMessage(messages.getMessage("cantBreak"));
+                break;
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPlace(BlockPlaceEvent event) {
-        checkBlocks(event);
+        if(event.isCancelled()) {
+            return;
+        }
+        Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PLACE)) {
+                event.setCancelled(true);
+                p.sendMessage(messages.getMessage("cantPlace"));
+                break;
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onInteractBlock(PlayerInteractEvent event) {
-        if(event.isCancelled()) return;
-        if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.PHYSICAL)) return;
-        if(event.getClickedBlock() == null) return;
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getAction().equals(Action.PHYSICAL)) {
+            return;
+        }
+        if(event.getClickedBlock() == null) {
+            return;
+        }
         Player p = event.getPlayer();
-        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields(event.getClickedBlock().getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
-            if(field.getFieldOwner().equals(p.getName())) continue;
-            if(field.getFieldContributors().contains(p.getName())) continue;
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
             if(schema.getFlags().contains(FieldFlag.PREVENT_PLACE)) {
                 if(event.getItem() != null) {
                     if(event.getItem().getType().name().toLowerCase().contains("_bucket") ||
@@ -109,13 +150,19 @@ public class FieldProtectionEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onInteractEntity(PlayerInteractEntityEvent event) {
-        if(event.isCancelled()) return;
+        if(event.isCancelled()) {
+            return;
+        }
         Player p = event.getPlayer();
-        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
             Entity clicked = event.getRightClicked();
             if(schema.getFlags().contains(FieldFlag.PREVENT_SPAWN_EGGS)) {
                 if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
@@ -155,10 +202,16 @@ public class FieldProtectionEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageByEntityEvent event) {
-        if(event.isCancelled()) return;
-        if(!(event.getDamager() instanceof Player)) return;
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!(event.getDamager() instanceof Player)) {
+            return;
+        }
         Player p = (Player) event.getDamager();
-        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
@@ -194,7 +247,9 @@ public class FieldProtectionEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onSpread(BlockSpreadEvent event) {
-        if(event.isCancelled()) return;
+        if(event.isCancelled()) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
         for(Field field : fields) {
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_SPREAD)) {
@@ -205,13 +260,21 @@ public class FieldProtectionEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onShoot(ProjectileLaunchEvent event) {
-        if(event.isCancelled()) return;
-        if(!(event.getEntity().getShooter() instanceof Player)) return;
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!(event.getEntity().getShooter() instanceof Player)) {
+            return;
+        }
         Player p = (Player) event.getEntity().getShooter();
-        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_BOW)) {
                 if(event.getEntity() instanceof Arrow) {
                     event.setCancelled(true);
@@ -236,13 +299,21 @@ public class FieldProtectionEvents implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onFish(PlayerFishEvent event) {
-        if(event.isCancelled()) return;
-        if(event.getCaught() == null) return;
+        if(event.isCancelled()) {
+            return;
+        }
+        if(event.getCaught() == null) {
+            return;
+        }
         Player p = event.getPlayer();
-        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields(event.getCaught().getLocation());
         for(Field field : fields) {
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_FISHING_ROD)) {
                 event.setCancelled(true);
                 break;
@@ -269,40 +340,32 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
     }
 
-    private void checkBlocks(Event event) {
-        if(!(event instanceof BlockPlaceEvent) && !(event instanceof BlockBreakEvent)) return;
-        boolean canceled = false;
-        Player p = null;
-        if(event instanceof BlockPlaceEvent) {
-            BlockPlaceEvent ev1 = (BlockPlaceEvent) event;
-            if(ev1.isCancelled()) canceled = true;
-            p = ev1.getPlayer();
+    @EventHandler(priority = EventPriority.LOW)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        if(event.isCancelled()) {
+            return;
         }
-        if(event instanceof BlockBreakEvent) {
-            BlockBreakEvent ev2 = (BlockBreakEvent) event;
-            if(ev2.isCancelled()) canceled = true;
-            p = ev2.getPlayer();
-        }
-        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) return;
-        if(canceled) return;
-        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
         for(Field field : fields) {
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
-            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PLACE)) {
-                if(event instanceof BlockPlaceEvent) {
-                    BlockPlaceEvent ev1 = (BlockPlaceEvent) event;
-                    ev1.setCancelled(true);
-                    p.sendMessage(messages.getMessage("cantPlace"));
-                    return;
-                }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+                event.setCancelled(true);
+                break;
             }
-            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
-                if(event instanceof BlockBreakEvent) {
-                    BlockBreakEvent ev2 = (BlockBreakEvent) event;
-                    ev2.setCancelled(true);
-                    p.sendMessage(messages.getMessage("cantBreak"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onEntityExplode(EntityExplodeEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        for(Block b : event.blockList()) {
+            List<Field> fields = fieldsManager.getFields(b.getLocation());
+            for (Field field : fields) {
+                if (field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+                    event.setCancelled(true);
+                    break;
                 }
-                return;
             }
         }
     }
