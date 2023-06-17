@@ -345,11 +345,13 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
-        List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
-        for(Field field : fields) {
-            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
-                event.setCancelled(true);
-                break;
+        for(Block b : event.blockList()) {
+            List<Field> fields = fieldsManager.getFields(b.getLocation());
+            for (Field field : fields) {
+                if (field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+                    event.setCancelled(true);
+                    break;
+                }
             }
         }
     }
