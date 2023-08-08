@@ -48,9 +48,13 @@ public class FieldBlockEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlaceField(BlockPlaceEvent event) {
-        if(event.isCancelled()) return;
+        if(event.isCancelled()) {
+            return;
+        }
         Player p = event.getPlayer();
-        if(p.isSneaking()) return;
+        if(p.isSneaking()) {
+            return;
+        }
         ItemStack item = p.getInventory().getItemInMainHand();
         FieldSchema schema = null;
         for(String name : fieldsManager.getSchemas().keySet()) {
@@ -74,7 +78,9 @@ public class FieldBlockEvents implements Listener {
                 break;
             }
         }
-        if(schema == null) return;
+        if(schema == null) {
+            return;
+        }
         if(!plugin.getPermissionManager().checkPermission(p, schema.getPermission())) {
             event.setCancelled(true);
             return;
@@ -100,7 +106,9 @@ public class FieldBlockEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onRemoveField(BlockBreakEvent event) {
-        if(event.isCancelled()) return;
+        if(event.isCancelled()) {
+            return;
+        }
         Player p = event.getPlayer();
         Field field = null;
         for(Field f : fieldsManager.getFields()) {
@@ -109,7 +117,9 @@ public class FieldBlockEvents implements Listener {
                 break;
             }
         }
-        if(field == null) return;
+        if(field == null) {
+            return;
+        }
         event.setCancelled(true);
         if(field.getFieldOwner().equals(p.getName())
                 || p.hasPermission(plugin.getPermissionManager().getPermission("removeFieldIfNotOwner"))) {

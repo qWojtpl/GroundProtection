@@ -12,7 +12,9 @@ public class PermissionManager {
     private final HashMap<String, Permission> permissions = new HashMap<>();
 
     public Permission registerPermission(String id, String name, String description) {
-        if(id == null || name == null) return null;
+        if(id == null || name == null) {
+            return null;
+        }
         Permission check = plugin.getServer().getPluginManager().getPermission(name);
         if(check != null) {
             plugin.getServer().getPluginManager().removePermission(check);

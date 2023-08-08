@@ -222,7 +222,9 @@ public class FieldProtectionEvents implements Listener {
                     break;
                 }
             }
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) continue;
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
             if(schema.getFlags().contains(FieldFlag.PROTECT_ANIMALS)) {
                 if(dataHandler.getAnimals().contains(victim.getType().name())) {
                     event.setCancelled(true);

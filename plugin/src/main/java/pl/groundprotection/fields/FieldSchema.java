@@ -1,7 +1,6 @@
 package pl.groundprotection.fields;
 
 import lombok.Getter;
-import org.bukkit.Material;
 
 import java.util.List;
 

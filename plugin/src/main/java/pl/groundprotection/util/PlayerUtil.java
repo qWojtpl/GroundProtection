@@ -13,7 +13,9 @@ public class PlayerUtil {
     @Nullable
     public static Player getPlayer(String nickname) {
         for(Player p : GroundProtection.getInstance().getServer().getOnlinePlayers()) {
-            if(p.getName().equals(nickname)) return p;
+            if(p.getName().equals(nickname)) {
+                return p;
+            }
         }
         return null;
     }
@@ -23,9 +25,13 @@ public class PlayerUtil {
         boolean sourcePlayerVanished = isVanished(player);
         for(Player p : GroundProtection.getInstance().getServer().getOnlinePlayers()) {
             if(!sourcePlayerVanished) {
-                if(isVanished(p)) continue;
+                if(isVanished(p)) {
+                    continue;
+                }
             }
-            if(p.getName().equals(nickname)) return p;
+            if(p.getName().equals(nickname)) {
+                return p;
+            }
         }
         return null;
     }
@@ -44,7 +50,9 @@ public class PlayerUtil {
         List<Player> playerList = new ArrayList<>();
         for(Player p : GroundProtection.getInstance().getServer().getOnlinePlayers()) {
             if(!sourcePlayerVanished) {
-                if(isVanished(p)) continue;
+                if(isVanished(p)) {
+                    continue;
+                }
             }
             playerList.add(p);
         }

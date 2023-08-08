@@ -6,7 +6,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import pl.groundprotection.GroundProtection;
-import pl.groundprotection.fields.Field;
 import pl.groundprotection.permissions.PermissionManager;
 import pl.groundprotection.util.PlayerUtil;
 
@@ -24,19 +23,35 @@ public class CommandHelper implements TabCompleter {
         Player player = (Player) sender;
         List<String> completions = new ArrayList<>();
         if(args.length == 1) {
-            if(permissionManager.hasPermission(player, "getFieldInfo")) completions.add("info");
-            if(permissionManager.hasPermission(player, "visualizeField")) completions.add("visualize");
-            if(permissionManager.hasPermission(player, "getFieldLocations")) completions.add("locations");
-            if(permissionManager.hasPermission(player, "countFields")) completions.add("counts");
-            if(permissionManager.hasPermission(player, "allowPlayer")) completions.add("allow");
-            if(permissionManager.hasPermission(player, "removePlayer")) completions.add("remove");
-            if(permissionManager.hasPermission(player, "reloadConfiguration")) completions.add("reload");
-            if(permissionManager.hasPermission(player, "getFieldItem")) completions.add("get");
+            if(permissionManager.hasPermission(player, "getFieldInfo")) {
+                completions.add("info");
+            }
+            if(permissionManager.hasPermission(player, "visualizeField")) {
+                completions.add("visualize");
+            }
+            if(permissionManager.hasPermission(player, "getFieldLocations")) {
+                completions.add("locations");
+            }
+            if(permissionManager.hasPermission(player, "countFields")) {
+                completions.add("counts");
+            }
+            if(permissionManager.hasPermission(player, "allowPlayer")) {
+                completions.add("allow");
+            }
+            if(permissionManager.hasPermission(player, "removePlayer")) {
+                completions.add("remove");
+            }
+            if(permissionManager.hasPermission(player, "reloadConfiguration")) {
+                completions.add("reload");
+            }
+            if(permissionManager.hasPermission(player, "getFieldItem")) {
+                completions.add("get");
+            }
         } else if(args.length == 2) {
             if(permissionManager.hasPermission(player, "allowPlayer")
                     || permissionManager.hasPermission(player, "removePlayer")) {
                 if(args[0].equalsIgnoreCase("allow") || args[0].equalsIgnoreCase("remove")) {
-                    for (Player p : PlayerUtil.getPlayers((Player) sender)) {
+                    for(Player p : PlayerUtil.getPlayers((Player) sender)) {
                         completions.add(p.getName());
                     }
                 }

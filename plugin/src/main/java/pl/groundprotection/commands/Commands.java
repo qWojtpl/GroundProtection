@@ -70,7 +70,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if(args[0].equalsIgnoreCase("get")) {
                     if(args.length < 2) {
-                        sender.sendMessage(messages.getMessage("provideField"));
+                        sender.sendMessage(messages.getMessage("mustProvideField"));
                     } else {
                         giveField((Player) sender, args[1]);
                     }
@@ -87,7 +87,9 @@ public class Commands implements CommandExecutor {
     }
 
     private void fieldInfo(Player sender) {
-        if(!permissionManager.checkPermission(sender, "getFieldInfo")) return;
+        if(!permissionManager.checkPermission(sender, "getFieldInfo")) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields((sender).getLocation());
         if(fields.size() == 0) {
             sender.sendMessage(messages.getMessage("noFieldFound"));
@@ -132,7 +134,9 @@ public class Commands implements CommandExecutor {
 
     private void reload(CommandSender sender) {
         if(sender instanceof Player) {
-            if (!permissionManager.checkPermission((Player) sender, "reloadConfiguration")) return;
+            if(!permissionManager.checkPermission((Player) sender, "reloadConfiguration")) {
+                return;
+            }
         }
         plugin.getDataHandler().save();
         plugin.getDataHandler().loadConfig();;
@@ -140,7 +144,9 @@ public class Commands implements CommandExecutor {
     }
 
     private void visualizeField(Player sender) {
-        if(!permissionManager.checkPermission(sender, "visualizeField")) return;
+        if(!permissionManager.checkPermission(sender, "visualizeField")) {
+            return;
+        }
         List<Field> fields = fieldsManager.getFields((sender).getLocation());
         final Material[] materials = new Material[]{
                 Material.RED_STAINED_GLASS,
@@ -174,7 +180,9 @@ public class Commands implements CommandExecutor {
 
     private void countPlayerFields(CommandSender sender, String player) {
         if(sender instanceof Player) {
-            if(!permissionManager.checkPermission((Player) sender, "countFields")) return;
+            if(!permissionManager.checkPermission((Player) sender, "countFields")) {
+                return;
+            }
         } else {
             if(player.equals("CONSOLE")) {
                 sender.sendMessage(messages.getMessage("mustProvidePlayer"));
@@ -189,7 +197,9 @@ public class Commands implements CommandExecutor {
         sender.sendMessage(" ");
         for(String name : fieldsManager.getSchemas().keySet()) {
             FieldSchema schema = fieldsManager.getFieldSchema(name);
-            if(schema == null) continue;
+            if(schema == null) {
+                continue;
+            }
             int count = fieldsManager.getCurrentCount(schema, player);
             int max = fieldsManager.getLimit(schema, player);
             String color = "§b";
@@ -203,7 +213,9 @@ public class Commands implements CommandExecutor {
 
     private void getLocations(CommandSender sender, String player) {
         if(sender instanceof Player) {
-            if(!permissionManager.checkPermission((Player) sender, "getFieldLocations")) return;
+            if(!permissionManager.checkPermission((Player) sender, "getFieldLocations")) {
+                return;
+            }
         } else {
             if(player.equals("CONSOLE")) {
                 sender.sendMessage(messages.getMessage("mustProvidePlayer"));
@@ -215,9 +227,13 @@ public class Commands implements CommandExecutor {
         List<Field> fields = fieldsManager.getPlayerFields(player);
         for(String schemaKey : fieldsManager.getSchemas().keySet()) {
             FieldSchema schema = fieldsManager.getFieldSchema(schemaKey);
-            if(schema == null) continue;
+            if(schema == null) {
+                continue;
+            }
             for(Field field : fields) {
-                if(!field.getSchema().equals(schema)) continue;
+                if(!field.getSchema().equals(schema)) {
+                    continue;
+                }
                 Location loc = field.getFieldLocation();
                 sender.sendMessage("§e" + field.getSchema().getName() + "§5: " + LocationUtil.locationBuilder(loc));
             }
@@ -226,7 +242,9 @@ public class Commands implements CommandExecutor {
     }
 
     private void allowPlayer(Player sender, String nickname) {
-        if(!permissionManager.checkPermission(sender, "allowPlayer")) return;
+        if(!permissionManager.checkPermission(sender, "allowPlayer")) {
+            return;
+        }
         if(sender.getName().equals(nickname)) {
             sender.sendMessage(messages.getMessage("cantAllowYourself"));
             return;
@@ -239,7 +257,9 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(sender.getName())) continue;
+            if(!field.getFieldOwner().equals(sender.getName())) {
+                continue;
+            }
             if(field.getFieldContributors().contains(nickname)) {
                 j++;
                 continue;
@@ -259,7 +279,9 @@ public class Commands implements CommandExecutor {
     }
 
     private void removePlayer(Player sender, String nickname) {
-        if(!permissionManager.checkPermission(sender, "removePlayer")) return;
+        if(!permissionManager.checkPermission(sender, "removePlayer")) {
+            return;
+        }
         if(sender.getName().equals(nickname)) {
             sender.sendMessage(messages.getMessage("cantRemoveYourself"));
             return;
@@ -268,7 +290,9 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(sender.getName())) continue;
+            if(!field.getFieldOwner().equals(sender.getName())) {
+                continue;
+            }
             if(!field.getFieldContributors().contains(nickname)) {
                 j++;
                 continue;
@@ -288,7 +312,9 @@ public class Commands implements CommandExecutor {
     }
 
     private void giveField(Player sender, String fieldName) {
-        if(!permissionManager.checkPermission(sender, "getFieldItem")) return;
+        if(!permissionManager.checkPermission(sender, "getFieldItem")) {
+            return;
+        }
         FieldSchema schema = fieldsManager.getFieldSchema(fieldName);
         if(schema == null) {
             sender.sendMessage(messages.getMessage("notFoundField"));

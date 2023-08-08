@@ -58,7 +58,9 @@ public class DataHandler {
         File configFile = getConfigFile();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
         ConfigurationSection section = yml.getConfigurationSection("fields");
-        if(section == null) return;
+        if(section == null) {
+            return;
+        }
         for(String fieldName : section.getKeys(false)) {
             String path = "fields." + fieldName + ".";
             int size = yml.getInt(path + "size");
@@ -114,7 +116,9 @@ public class DataHandler {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(dataFile);
         data = yml;
         ConfigurationSection section = yml.getConfigurationSection("fields");
-        if(section == null) return;
+        if(section == null) {
+            return;
+        }
         for(String key : section.getKeys(false)) {
             int id = 0;
             try {
@@ -160,7 +164,9 @@ public class DataHandler {
         File messagesFile = getMessagesFile();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(messagesFile);
         ConfigurationSection section = yml.getConfigurationSection("messages");
-        if(section == null) return;
+        if(section == null) {
+            return;
+        }
         Messages messages = plugin.getMessages();
         for(String key : section.getKeys(false)) {
             messages.addMessage(key, yml.getString("messages." + key));
@@ -171,7 +177,9 @@ public class DataHandler {
         File configFile = getConfigFile();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
         ConfigurationSection section = yml.getConfigurationSection("permissions");
-        if(section == null) return;
+        if(section == null) {
+            return;
+        }
         for(String key : section.getKeys(false)) {
             String name = yml.getString("permissions." + key);
             if(name != null) {

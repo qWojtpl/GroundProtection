@@ -82,7 +82,9 @@ public class FieldVisualizer {
                 }
             }
             for(int i = 0; i < 16; i++) {
-                if(locations.size() - 1 < iterator) break;
+                if(locations.size() - 1 < iterator) {
+                    break;
+                }
                 BlockData blockData = material.createBlockData();
                 Location blockChangeLoc = locations.get(iterator++);
                 blockChangeLoc.setY(yIterator);
@@ -110,7 +112,9 @@ public class FieldVisualizer {
                 }
             }
             for(int i = 0; i < 16; i++) {
-                if(locations.size() - 1 < iterator) break;
+                if(locations.size() - 1 < iterator) {
+                    break;
+                }
                 Location blockChangeLoc = locations.get(iterator++);
                 blockChangeLoc.setY(yIterator);
                 BlockData blockData = blockChangeLoc.getBlock().getBlockData();

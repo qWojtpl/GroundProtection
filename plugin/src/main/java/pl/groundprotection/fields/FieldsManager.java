@@ -43,7 +43,9 @@ public class FieldsManager {
     @Nullable
     public FieldFlag getFlag(String name) {
         for(FieldFlag flag : FieldFlag.values()) {
-            if(flag.name().equals(name)) return flag;
+            if(flag.name().equals(name)) {
+                return flag;
+            }
         }
         return null;
     }
@@ -52,14 +54,24 @@ public class FieldsManager {
         for(Field field : fields) {
             FieldSchema s = field.getSchema();
             if(plugin.getDataHandler().isFieldOverlap()) {
-                if(field.getFieldOwner().equals(player.getName())) continue;
-                if(field.getFieldContributors().contains(player.getName())) continue;
+                if(field.getFieldOwner().equals(player.getName())) {
+                    continue;
+                }
+                if(field.getFieldContributors().contains(player.getName())) {
+                    continue;
+                }
             }
             if(field.getFieldLocation().getWorld() != null) {
-                if (!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+                if (!field.getFieldLocation().getWorld().equals(location.getWorld())) {
+                    continue;
+                }
             }
-            if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) continue;
-            if(getDistance(field.getFieldLocation(), location) > (schema.getSize()-1)/2 + (s.getSize()-1)/2) continue;
+            if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) {
+                continue;
+            }
+            if(getDistance(field.getFieldLocation(), location) > (schema.getSize()-1)/2 + (s.getSize()-1)/2) {
+                continue;
+            }
             return false;
         }
         return true;
@@ -80,9 +92,13 @@ public class FieldsManager {
         location = location.getBlock().getLocation();
         for(Field field : fields) {
             if(field.getFieldLocation().getWorld() != null) {
-                if(!field.getFieldLocation().getWorld().equals(location.getWorld())) continue;
+                if(!field.getFieldLocation().getWorld().equals(location.getWorld())) {
+                    continue;
+                }
             }
-            if(field.getFieldLocation().distance(location) > field.getSchema().getSize() * 2) continue;
+            if(field.getFieldLocation().distance(location) > field.getSchema().getSize() * 2) {
+                continue;
+            }
             FieldSchema schema = field.getSchema();
             if(getDistance(field.getFieldLocation(), location) <= (schema.getSize() - 1) / 2) {
                 currentFields.add(field);
@@ -158,8 +174,12 @@ public class FieldsManager {
 
     public boolean isAllowed(Location location, String player) {
         for(Field field : plugin.getFieldsManager().getFields(location)) {
-            if(field.getFieldOwner().equals(player)) return true;
-            if(field.getFieldContributors().contains(player)) return true;
+            if(field.getFieldOwner().equals(player)) {
+                return true;
+            }
+            if(field.getFieldContributors().contains(player)) {
+                return true;
+            }
         }
         return false;
     }
@@ -192,7 +212,9 @@ public class FieldsManager {
         int returnable = 0;
         for(String limit : schema.getLimits()) {
             String[] split = limit.split(":");
-            if(split.length != 2) continue;
+            if(split.length != 2) {
+                continue;
+            }
             if(player.hasPermission(split[0])) {
                 try {
                     int a = Integer.parseInt(split[1]);
