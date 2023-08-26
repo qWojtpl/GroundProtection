@@ -12,8 +12,11 @@ public class PlayerUtil {
 
     @Nullable
     public static Player getPlayer(String nickname) {
+        if(nickname == null) {
+            return null;
+        }
         for(Player p : GroundProtection.getInstance().getServer().getOnlinePlayers()) {
-            if(p.getName().equals(nickname)) {
+            if(p.getName().equals(nickname) || p.getUniqueId().toString().equals(nickname)) {
                 return p;
             }
         }
@@ -57,6 +60,14 @@ public class PlayerUtil {
             playerList.add(p);
         }
         return playerList;
+    }
+
+    public static String parseNickname(String player) {
+        GroundProtection plugin = GroundProtection.getInstance();
+        if(!plugin.getDataHandler().isUuidMode()) {
+            return player;
+        }
+        return plugin.getServer().getOfflinePlayer(player).getUniqueId().toString();
     }
 
 }

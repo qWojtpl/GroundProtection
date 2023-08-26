@@ -2,7 +2,6 @@ package pl.groundprotection.fields;
 
 import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
@@ -50,14 +49,15 @@ public class FieldsManager {
         return null;
     }
 
-    public boolean canPlaceField(FieldSchema schema, Player player, Location location) {
+    public boolean canPlaceField(FieldSchema schema, String player, Location location) {
+        player = PlayerUtil.parseNickname(player);
         for(Field field : fields) {
             FieldSchema s = field.getSchema();
             if(plugin.getDataHandler().isFieldOverlap()) {
-                if(field.getFieldOwner().equals(player.getName())) {
+                if(field.getFieldOwner().equals(player)) {
                     continue;
                 }
-                if(field.getFieldContributors().contains(player.getName())) {
+                if(field.getFieldContributors().contains(player)) {
                     continue;
                 }
             }
@@ -112,6 +112,7 @@ public class FieldsManager {
     }
 
     public List<Field> getPlayerFields(String player) {
+        player = PlayerUtil.parseNickname(player);
         List<Field> playerFields = new ArrayList<>();
         for(Field field : fields) {
             if(field.getFieldOwner().equals(player)) {
@@ -126,6 +127,7 @@ public class FieldsManager {
     }
 
     public List<Field> getPlayerFieldsBySchema(String player, FieldSchema schema) {
+        player = PlayerUtil.parseNickname(player);
         List<Field> playerFields = new ArrayList<>();
         for(Field field : fields) {
             if(field.getFieldOwner().equals(player)) {
@@ -137,17 +139,24 @@ public class FieldsManager {
         return playerFields;
     }
 
-    public void createField(FieldSchema schema, Player owner, Location location) {
+    public void createField(FieldSchema schema, String owner, Location location) {
+        owner = PlayerUtil.parseNickname(owner);
         DataHandler dataHandler = plugin.getDataHandler();
         dataHandler.setLastFieldID(dataHandler.getLastFieldID() + 1);
-        Field field = new Field(dataHandler.getLastFieldID(), schema, location, owner.getName(), new ArrayList<>());
-        owner.sendMessage(MessageFormat.format(messages.getMessage("placedField"), schema.getName()));
+        Field field = new Field(dataHandler.getLastFieldID(), schema, location, owner, new ArrayList<>());
+        Player ownerPlayer = PlayerUtil.getPlayer(owner);
+        if(ownerPlayer != null) {
+            ownerPlayer.sendMessage(MessageFormat.format(messages.getMessage("placedField"), schema.getName()));
+        }
         fields.add(field);
         dataHandler.saveField(field);
     }
 
-    public void removeField(Field field, Player player) {
-        player.sendMessage(MessageFormat.format(messages.getMessage("removedField"), field.getSchema().getName()));
+    public void removeField(Field field, String player) {
+        Player p = PlayerUtil.getPlayer(player);
+        if(p != null) {
+            p.sendMessage(MessageFormat.format(messages.getMessage("removedField"), field.getSchema().getName()));
+        }
         fields.remove(field);
         plugin.getDataHandler().removeField(String.valueOf(field.getID()));
     }
@@ -197,6 +206,7 @@ public class FieldsManager {
     }
 
     public int getCurrentCount(FieldSchema schema, String player) {
+        player = PlayerUtil.parseNickname(player);
         int count = 0;
         for(Field field : fields) {
             if(field.getFieldOwner().equals(player)) {
@@ -209,13 +219,21 @@ public class FieldsManager {
     }
 
     public int getLimit(FieldSchema schema, Player player) {
+        return getLimit(schema, player.getName());
+    }
+
+    public int getLimit(FieldSchema schema, String player) {
+        Player p = PlayerUtil.getPlayer(PlayerUtil.parseNickname(player));
+        if(p == null) {
+            return 0;
+        }
         int returnable = 0;
         for(String limit : schema.getLimits()) {
             String[] split = limit.split(":");
             if(split.length != 2) {
                 continue;
             }
-            if(player.hasPermission(split[0])) {
+            if(p.hasPermission(split[0])) {
                 try {
                     int a = Integer.parseInt(split[1]);
                     if(a > returnable) {
@@ -230,17 +248,15 @@ public class FieldsManager {
         return returnable;
     }
 
-    public int getLimit(FieldSchema schema, String player) {
-        return getLimit(schema, PlayerUtil.getPlayer(player));
-    }
-
     public void addContributor(Field field, String player) {
+        player = PlayerUtil.parseNickname(player);
         field.getFieldContributors().remove(player);
         field.getFieldContributors().add(player);
         plugin.getDataHandler().saveFieldContributors(field);
     }
 
     public void removeContributor(Field field, String player) {
+        player = PlayerUtil.parseNickname(player);
         field.getFieldContributors().remove(player);
         plugin.getDataHandler().saveFieldContributors(field);
     }

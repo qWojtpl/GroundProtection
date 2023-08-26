@@ -3,6 +3,7 @@ package pl.groundprotection;
 import lombok.Getter;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import pl.groundprotection.api.GroundProtectionAPI;
 import pl.groundprotection.commands.CommandHelper;
 import pl.groundprotection.commands.Commands;
 import pl.groundprotection.data.DataHandler;
@@ -47,6 +48,10 @@ public final class GroundProtection extends JavaPlugin {
 
     public static GroundProtection getInstance() {
         return main;
+    }
+
+    public static GroundProtectionAPI getAPI() {
+        return new GroundProtectionAPI();
     }
 
 }

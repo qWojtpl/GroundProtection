@@ -22,6 +22,7 @@ public class DataHandler {
     private final GroundProtection plugin = GroundProtection.getInstance();
     private final FieldsManager fieldsManager = plugin.getFieldsManager();
     private boolean fieldOverlap;
+    private boolean uuidMode;
     private List<String> doorBlocks = new ArrayList<>();
     private List<String> chestBlocks = new ArrayList<>();
     private List<String> otherBlocks = new ArrayList<>();
@@ -39,9 +40,9 @@ public class DataHandler {
         plugin.getMessages().clearMessages();
         plugin.getPermissionManager().clearPermissions();
         doorBlocks.clear();
-        File configFile = getConfigFile();
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(getConfigFile());
         fieldOverlap = yml.getBoolean("config.fieldOverlap");
+        uuidMode = yml.getBoolean("config.uuidMode");
         doorBlocks = yml.getStringList("protectList.door_blocks");
         chestBlocks = yml.getStringList("protectList.chest_blocks");
         otherBlocks = yml.getStringList("protectList.other_blocks");
@@ -55,8 +56,7 @@ public class DataHandler {
     }
 
     public void loadFields() {
-        File configFile = getConfigFile();
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(configFile);
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(getConfigFile());
         ConfigurationSection section = yml.getConfigurationSection("fields");
         if(section == null) {
             return;
@@ -112,8 +112,7 @@ public class DataHandler {
     }
 
     public void restoreFields() {
-        File dataFile = getDataFile();
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(dataFile);
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(getDataFile());
         data = yml;
         ConfigurationSection section = yml.getConfigurationSection("fields");
         if(section == null) {
@@ -239,27 +238,23 @@ public class DataHandler {
     }
 
     public File getConfigFile() {
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
-        if(!configFile.exists()) {
-            plugin.saveResource("config.yml", false);
-        }
-        return configFile;
+        return getFile("config.yml");
     }
 
     public File getDataFile() {
-        File dataFile = new File(plugin.getDataFolder(), "data.yml");
-        if(!dataFile.exists()) {
-            plugin.saveResource("data.yml", false);
-        }
-        return dataFile;
+        return getFile("data.yml");
     }
 
     public File getMessagesFile() {
-        File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
-        if(!messagesFile.exists()) {
-            plugin.saveResource("messages.yml", false);
+        return getFile("messages.yml");
+    }
+
+    public File getFile(String resourceName) {
+        File file = new File(plugin.getDataFolder(), resourceName);
+        if(!file.exists()) {
+            plugin.saveResource(resourceName, false);
         }
-        return messagesFile;
+        return file;
     }
 
 }

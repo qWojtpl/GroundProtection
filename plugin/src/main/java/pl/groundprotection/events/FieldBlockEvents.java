@@ -39,7 +39,7 @@ public class FieldBlockEvents implements Listener {
                         field.getSchema().getName(),
                         location,
                         field.getSchema().getPermission()));
-                fieldsManager.removeField(field, p);
+                fieldsManager.removeField(field, p.getName());
                 continue;
             }
             plugin.getDataHandler().saveLogin(field);
@@ -90,9 +90,9 @@ public class FieldBlockEvents implements Listener {
             event.setCancelled(true);
             return;
         }
-        if(fieldsManager.canPlaceField(schema, p, event.getBlock().getLocation())) {
+        if(fieldsManager.canPlaceField(schema, p.getName(), event.getBlock().getLocation())) {
             if(!fieldsManager.isReachedLimit(schema, p)) {
-                fieldsManager.createField(schema, p, event.getBlock().getLocation());
+                fieldsManager.createField(schema, p.getName(), event.getBlock().getLocation());
             } else {
                 p.sendMessage(MessageFormat.format(messages.getMessage("reachedLimit"),
                         fieldsManager.getLimit(schema, p)));
@@ -123,7 +123,7 @@ public class FieldBlockEvents implements Listener {
         event.setCancelled(true);
         if(field.getFieldOwner().equals(p.getName())
                 || p.hasPermission(plugin.getPermissionManager().getPermission("removeFieldIfNotOwner"))) {
-            fieldsManager.removeField(field, p);
+            fieldsManager.removeField(field, p.getName());
             event.getBlock().setType(Material.AIR);
             event.getPlayer().getWorld().dropItemNaturally(event.getBlock().getLocation(), field.getSchema().getItem().getItemStack());
         } else {
