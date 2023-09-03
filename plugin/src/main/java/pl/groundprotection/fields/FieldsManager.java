@@ -182,6 +182,7 @@ public class FieldsManager {
     }
 
     public boolean isAllowed(Location location, String player) {
+        player = PlayerUtil.parseNickname(player);
         for(Field field : plugin.getFieldsManager().getFields(location)) {
             if(field.getFieldOwner().equals(player)) {
                 return true;
@@ -198,7 +199,8 @@ public class FieldsManager {
     }
 
     public boolean isReachedLimit(FieldSchema schema, String player) {
-        return (getCurrentCount(schema, player) >= getLimit(schema, player));
+        player = PlayerUtil.parseNickname(player);
+        return getCurrentCount(schema, player) >= getLimit(schema, player);
     }
 
     public int getCurrentCount(FieldSchema schema, Player player) {

@@ -17,6 +17,7 @@ import pl.groundprotection.fields.FieldItem;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
 import pl.groundprotection.util.LocationUtil;
+import pl.groundprotection.util.PlayerUtil;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -121,7 +122,7 @@ public class FieldBlockEvents implements Listener {
             return;
         }
         event.setCancelled(true);
-        if(field.getFieldOwner().equals(p.getName())
+        if(field.getFieldOwner().equals(PlayerUtil.parseNickname(p.getName()))
                 || p.hasPermission(plugin.getPermissionManager().getPermission("removeFieldIfNotOwner"))) {
             fieldsManager.removeField(field, p.getName());
             event.getBlock().setType(Material.AIR);

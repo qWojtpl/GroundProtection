@@ -104,18 +104,18 @@ public class Commands implements CommandExecutor {
                             i++;
                             continue;
                         }
-                        contributors += ", " + contributor;
+                        contributors += ", " + PlayerUtil.getName(contributor);
                     }
                 }
                 String location = LocationUtil.locationBuilder(field.getFieldLocation());
-                if(field.getFieldOwner().equals(sender.getName()) ||
-                        field.getFieldContributors().contains(sender.getName()) ||
+                if(field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName())) ||
+                        field.getFieldContributors().contains(PlayerUtil.parseNickname(sender.getName())) ||
                         sender.hasPermission(permissionManager.getPermission("alwaysGetAccurateFieldInfo"))) {
                     String message = messages.getMessage("fieldInfoContributor");
                     String[] split = message.split("%nl%");
                     for(String msg : split) {
                         sender.sendMessage(MessageFormat.format(msg,
-                                field.getFieldOwner(),
+                                PlayerUtil.getName(field.getFieldOwner()),
                                 field.getSchema().getName(),
                                 contributors,
                                 location));
@@ -257,10 +257,10 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(sender.getName())) {
+            if(!field.getFieldOwner().equals(PlayerUtil.getName(sender.getName()))) {
                 continue;
             }
-            if(field.getFieldContributors().contains(nickname)) {
+            if(field.getFieldContributors().contains(PlayerUtil.getName(nickname))) {
                 j++;
                 continue;
             }
@@ -290,10 +290,10 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(sender.getName())) {
+            if(!field.getFieldOwner().equals(PlayerUtil.getName(sender.getName()))) {
                 continue;
             }
-            if(!field.getFieldContributors().contains(nickname)) {
+            if(!field.getFieldContributors().contains(PlayerUtil.getName(nickname))) {
                 j++;
                 continue;
             }

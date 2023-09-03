@@ -7,6 +7,7 @@ import pl.groundprotection.GroundProtection;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class PlayerUtil {
 
@@ -63,11 +64,22 @@ public class PlayerUtil {
     }
 
     public static String parseNickname(String player) {
+        if(player.length() > 16) {
+            return player;
+        }
         GroundProtection plugin = GroundProtection.getInstance();
         if(!plugin.getDataHandler().isUuidMode()) {
             return player;
         }
         return plugin.getServer().getOfflinePlayer(player).getUniqueId().toString();
+    }
+
+    public static String getName(String uuid) {
+        GroundProtection plugin = GroundProtection.getInstance();
+        if(!plugin.getDataHandler().isUuidMode()) {
+            return uuid;
+        }
+        return plugin.getServer().getOfflinePlayer(UUID.fromString(uuid)).getName();
     }
 
 }

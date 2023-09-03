@@ -26,7 +26,7 @@ public class PermissionManager {
     }
 
     public Permission getPermission(String id) {
-        return permissions.getOrDefault(id, new Permission(""));
+        return permissions.getOrDefault(id, new Permission(id));
     }
 
     public boolean hasPermission(Player player, String id) {
