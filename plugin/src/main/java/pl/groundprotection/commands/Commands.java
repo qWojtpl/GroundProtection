@@ -97,14 +97,14 @@ public class Commands implements CommandExecutor {
             for(Field field : fields) {
                 String contributors = "§4-";
                 if(field.getFieldContributors().size() > 0) {
-                    contributors = field.getFieldContributors().get(0);
+                    contributors = PlayerUtil.unParseName(field.getFieldContributors().get(0));
                     int i = 0;
                     for(String contributor : field.getFieldContributors()) {
                         if(i == 0) {
                             i++;
                             continue;
                         }
-                        contributors += ", " + PlayerUtil.getName(contributor);
+                        contributors += ", " + PlayerUtil.unParseName(contributor);
                     }
                 }
                 String location = LocationUtil.locationBuilder(field.getFieldLocation());
@@ -115,14 +115,14 @@ public class Commands implements CommandExecutor {
                     String[] split = message.split("%nl%");
                     for(String msg : split) {
                         sender.sendMessage(MessageFormat.format(msg,
-                                PlayerUtil.getName(field.getFieldOwner()),
+                                PlayerUtil.unParseName(field.getFieldOwner()),
                                 field.getSchema().getName(),
                                 contributors,
                                 location));
                     }
                 } else {
                     sender.sendMessage(MessageFormat.format(messages.getMessage("fieldInfo"),
-                            field.getFieldOwner(),
+                            PlayerUtil.unParseName(field.getFieldOwner()),
                             field.getSchema().getName(),
                             contributors,
                             location));
@@ -160,8 +160,8 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(field.getFieldOwner().equalsIgnoreCase(sender.getName()) ||
-                    field.getFieldContributors().contains(sender.getName()) ||
+            if(field.getFieldOwner().equalsIgnoreCase(PlayerUtil.parseNickname(sender.getName())) ||
+                    field.getFieldContributors().contains(PlayerUtil.parseNickname(sender.getName())) ||
                     sender.hasPermission(permissionManager.getPermission("alwaysVisualizeField"))) {
                 i++;
                 new FieldVisualizer(field, sender, materials[j], 16 + (2 * i));
@@ -257,10 +257,10 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(PlayerUtil.getName(sender.getName()))) {
+            if(!field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName()))) {
                 continue;
             }
-            if(field.getFieldContributors().contains(PlayerUtil.getName(nickname))) {
+            if(field.getFieldContributors().contains(PlayerUtil.parseNickname(nickname))) {
                 j++;
                 continue;
             }
@@ -290,10 +290,10 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(PlayerUtil.getName(sender.getName()))) {
+            if(!field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName()))) {
                 continue;
             }
-            if(!field.getFieldContributors().contains(PlayerUtil.getName(nickname))) {
+            if(!field.getFieldContributors().contains(PlayerUtil.parseNickname(nickname))) {
                 j++;
                 continue;
             }

@@ -74,7 +74,7 @@ public class PlayerUtil {
         return plugin.getServer().getOfflinePlayer(player).getUniqueId().toString();
     }
 
-    public static String getName(String uuid) {
+    public static String unParseName(String uuid) {
         GroundProtection plugin = GroundProtection.getInstance();
         if(!plugin.getDataHandler().isUuidMode()) {
             return uuid;

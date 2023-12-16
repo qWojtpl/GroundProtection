@@ -66,6 +66,10 @@ public class FieldsManager {
                     continue;
                 }
             }
+            Location fieldLocationZero = field.getFieldLocation().clone();
+            fieldLocationZero.setY(0);
+            Location locationZero = location.zero();
+            locationZero.setY(0);
             if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) {
                 continue;
             }
@@ -96,7 +100,11 @@ public class FieldsManager {
                     continue;
                 }
             }
-            if(field.getFieldLocation().distance(location) > field.getSchema().getSize() * 2) {
+            Location fieldLocationZero = field.getFieldLocation().clone();
+            fieldLocationZero.setY(0);
+            Location locationZero = location.clone();
+            locationZero.setY(0);
+            if(fieldLocationZero.distance(locationZero) > field.getSchema().getSize() * 2) {
                 continue;
             }
             FieldSchema schema = field.getSchema();
