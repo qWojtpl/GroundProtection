@@ -146,7 +146,7 @@ public class FieldProtectionEvents implements Listener {
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_CROPS)) {
                 if(event.getAction().equals(Action.PHYSICAL)) {
-                    if(Material.FARMLAND.equals(event.getMaterial())) {
+                    if(Material.FARMLAND.equals(event.getClickedBlock().getType())) {
                         event.setCancelled(true);
                         break;
                     }
