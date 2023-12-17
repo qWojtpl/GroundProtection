@@ -11,6 +11,7 @@ public enum FieldFlag {
     PROTECT_ANIMALS(""),
     PROTECT_HOSTILES(""),
     PROTECT_OTHER_ENTITIES(""),
+    PROTECT_CROPS(""),
     PREVENT_PVP(""),
     PREVENT_POTIONS(""),
     PREVENT_FISHING_ROD(""),

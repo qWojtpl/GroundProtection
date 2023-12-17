@@ -144,6 +144,14 @@ public class FieldProtectionEvents implements Listener {
                     break;
                 }
             }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_CROPS)) {
+                if(event.getAction().equals(Action.PHYSICAL)) {
+                    if(Material.FARMLAND.equals(event.getMaterial())) {
+                        event.setCancelled(true);
+                        break;
+                    }
+                }
+            }
         }
         if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
     }
