@@ -68,9 +68,9 @@ public class FieldsManager {
             }
             Location fieldLocationZero = field.getFieldLocation().clone();
             fieldLocationZero.setY(0);
-            Location locationZero = location.zero();
+            Location locationZero = location.clone();
             locationZero.setY(0);
-            if(field.getFieldLocation().distance(location) > (schema.getSize() + s.getSize()) * 2) {
+            if(fieldLocationZero.distance(locationZero) > (schema.getSize() + s.getSize()) * 2) {
                 continue;
             }
             if(getDistance(field.getFieldLocation(), location) > (schema.getSize()-1)/2 + (s.getSize()-1)/2) {
