@@ -44,7 +44,7 @@ public class FieldProtectionEvents implements Listener {
         }
         List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
         for(Field field : fields) {
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+            if(fieldsManager.isAllowed(event.getBlock().getLocation(), p.getName())) {
                 continue;
             }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
@@ -66,7 +66,7 @@ public class FieldProtectionEvents implements Listener {
         }
         List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
         for(Field field : fields) {
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+            if(fieldsManager.isAllowed(event.getBlock().getLocation(), p.getName())) {
                 continue;
             }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PLACE)) {
@@ -95,7 +95,7 @@ public class FieldProtectionEvents implements Listener {
         List<Field> fields = fieldsManager.getFields(event.getClickedBlock().getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+            if(fieldsManager.isAllowed(event.getClickedBlock().getLocation(), p.getName())) {
                 continue;
             }
             if(schema.getFlags().contains(FieldFlag.PREVENT_PLACE)) {
@@ -153,7 +153,9 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantUse"));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -168,7 +170,7 @@ public class FieldProtectionEvents implements Listener {
         List<Field> fields = fieldsManager.getFields(p.getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+            if(fieldsManager.isAllowed(event.getRightClicked().getLocation(), p.getName())) {
                 continue;
             }
             Entity clicked = event.getRightClicked();
@@ -205,7 +207,9 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantUse"));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -220,17 +224,17 @@ public class FieldProtectionEvents implements Listener {
         if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
             return;
         }
-        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        Entity victim = event.getEntity();
+        List<Field> fields = fieldsManager.getFields(victim.getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
-            Entity victim = event.getEntity();
             if(schema.getFlags().contains(FieldFlag.PREVENT_PVP)) {
                 if(victim instanceof Player) {
                     event.setCancelled(true);
                     break;
                 }
             }
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+            if(fieldsManager.isAllowed(victim.getLocation(), p.getName())) {
                 continue;
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_ANIMALS)) {
@@ -252,7 +256,9 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantDamage"));
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantDamage"));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -321,7 +327,7 @@ public class FieldProtectionEvents implements Listener {
         }
         List<Field> fields = fieldsManager.getFields(event.getCaught().getLocation());
         for(Field field : fields) {
-            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+            if(fieldsManager.isAllowed(event.getCaught().getLocation(), p.getName())) {
                 continue;
             }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_FISHING_ROD)) {
