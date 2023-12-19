@@ -167,7 +167,7 @@ public class FieldProtectionEvents implements Listener {
         if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
             return;
         }
-        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        List<Field> fields = fieldsManager.getFields(event.getRightClicked().getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
             if(fieldsManager.isAllowed(event.getRightClicked().getLocation(), p.getName())) {
@@ -217,10 +217,20 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
+        Player p;
         if(!(event.getDamager() instanceof Player)) {
-            return;
+            if(event.getDamager() instanceof Projectile) {
+                if(((Projectile) event.getDamager()).getShooter() instanceof Player) {
+                    p = (Player) ((Projectile) event.getDamager()).getShooter();
+                } else {
+                    return;
+                }
+            } else {
+                return;
+            }
+        } else {
+            p = (Player) event.getDamager();
         }
-        Player p = (Player) event.getDamager();
         if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
             return;
         }
