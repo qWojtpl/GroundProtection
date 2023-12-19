@@ -335,7 +335,9 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantUse"));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -378,7 +380,9 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) p.sendMessage(messages.getMessage("cantUse"));
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantUse"));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -388,8 +392,8 @@ public class FieldProtectionEvents implements Listener {
         }
         for(Block b : event.blockList()) {
             List<Field> fields = fieldsManager.getFields(b.getLocation());
-            for (Field field : fields) {
-                if (field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+            for(Field field : fields) {
+                if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
                     event.setCancelled(true);
                     break;
                 }
@@ -435,7 +439,9 @@ public class FieldProtectionEvents implements Listener {
                 break;
             }
         }
-        p.sendMessage(messages.getMessage("cantDamage"));
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantDamage"));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -460,7 +466,9 @@ public class FieldProtectionEvents implements Listener {
                 break;
             }
         }
-        p.sendMessage(messages.getMessage("cantDamage"));
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantDamage"));
+        }
     }
 
 }
