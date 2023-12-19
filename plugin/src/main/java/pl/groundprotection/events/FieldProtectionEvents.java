@@ -10,10 +10,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.vehicle.VehicleCollisionEvent;
+import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
 import pl.groundprotection.data.Messages;
@@ -100,8 +105,8 @@ public class FieldProtectionEvents implements Listener {
             }
             if(schema.getFlags().contains(FieldFlag.PREVENT_PLACE)) {
                 if(event.getItem() != null) {
-                    if(event.getItem().getType().name().toLowerCase().contains("_bucket") ||
-                            event.getItem().getType().equals(Material.BONE_MEAL)) {
+                    if(event.getItem().getType().name().toLowerCase().contains("_bucket")
+                    || event.getItem().getType().equals(Material.BONE_MEAL)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
                         break;
@@ -110,7 +115,17 @@ public class FieldProtectionEvents implements Listener {
             }
             if(schema.getFlags().contains(FieldFlag.PREVENT_SPAWN_EGGS)) {
                 if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
-                        || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
+                || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
+                    event.setCancelled(true);
+                    event.setUseItemInHand(Event.Result.DENY);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PREVENT_VEHICLE_PLACE)) {
+                if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("minecart")
+                || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("minecart")
+                || p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_boat")
+                || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_boat")) {
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                     break;
@@ -176,14 +191,14 @@ public class FieldProtectionEvents implements Listener {
             Entity clicked = event.getRightClicked();
             if(schema.getFlags().contains(FieldFlag.PREVENT_SPAWN_EGGS)) {
                 if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
-                        || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
+                || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
                     event.setCancelled(true);
                     break;
                 }
             }
             if(schema.getFlags().contains(FieldFlag.PREVENT_NAME_TAGS)) {
                 if(p.getInventory().getItemInOffHand().getType().equals(Material.NAME_TAG)
-                        || p.getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
+                || p.getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
                     event.setCancelled(true);
                     break;
                 }
@@ -396,6 +411,56 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onVehicleDestroy(VehicleDestroyEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!(event.getAttacker() instanceof Player)) {
+            return;
+        }
+        Player p = (Player) event.getAttacker();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getVehicle().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getVehicle().getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PROTECT_VEHICLES)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+        p.sendMessage(messages.getMessage("cantDamage"));
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onVehicleDamage(VehicleDamageEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!(event.getAttacker() instanceof Player)) {
+            return;
+        }
+        Player p = (Player) event.getAttacker();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getVehicle().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getVehicle().getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PROTECT_VEHICLES)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+        p.sendMessage(messages.getMessage("cantDamage"));
     }
 
 }

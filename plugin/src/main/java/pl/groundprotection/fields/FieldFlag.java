@@ -12,6 +12,7 @@ public enum FieldFlag {
     PROTECT_HOSTILES(""),
     PROTECT_OTHER_ENTITIES(""),
     PROTECT_CROPS(""),
+    PROTECT_VEHICLES(""),
     PREVENT_PVP(""),
     PREVENT_POTIONS(""),
     PREVENT_FISHING_ROD(""),
@@ -19,6 +20,7 @@ public enum FieldFlag {
     PREVENT_SPREAD(""),
     PREVENT_SPAWN_EGGS(""),
     PREVENT_NAME_TAGS(""),
+    PREVENT_VEHICLE_PLACE(""),
     PREVENT_EXPLOSIONS("");
 
     private final String description;
