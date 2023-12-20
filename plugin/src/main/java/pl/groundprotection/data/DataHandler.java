@@ -23,6 +23,7 @@ public class DataHandler {
     private final FieldsManager fieldsManager = plugin.getFieldsManager();
     private boolean fieldOverlap;
     private boolean uuidMode;
+    private int saveInterval;
     private List<String> doorBlocks = new ArrayList<>();
     private List<String> chestBlocks = new ArrayList<>();
     private List<String> otherBlocks = new ArrayList<>();
@@ -41,8 +42,9 @@ public class DataHandler {
         plugin.getPermissionManager().clearPermissions();
         doorBlocks.clear();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(getConfigFile());
-        fieldOverlap = yml.getBoolean("config.fieldOverlap");
-        uuidMode = yml.getBoolean("config.uuidMode");
+        fieldOverlap = yml.getBoolean("config.fieldOverlap", true);
+        uuidMode = yml.getBoolean("config.uuidMode", false);
+        saveInterval = yml.getInt("config.saveInterval", 1);
         doorBlocks = yml.getStringList("protectList.door_blocks");
         chestBlocks = yml.getStringList("protectList.chest_blocks");
         otherBlocks = yml.getStringList("protectList.other_blocks");
@@ -74,7 +76,7 @@ public class DataHandler {
                 plugin.getLogger().severe("Cannot load " + fieldName + " field, because item is null");
                 continue;
             }
-            Material material = Material.getMaterial(materialStr);
+            Material material = Material.getMaterial(materialStr.toUpperCase());
             if(material == null) {
                 plugin.getLogger().severe("Cannot compare " + materialStr + " with a correct material!");
                 plugin.getLogger().severe("Cannot load " + fieldName + " field");
@@ -192,6 +194,10 @@ public class DataHandler {
                 plugin.getPermissionManager().registerPermission(key, name, description);
             }
         }
+    }
+
+    public void registerSaveTask() {
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this::save, 0L, 20L * saveInterval * 60);
     }
 
     public void save() {

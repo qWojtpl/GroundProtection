@@ -20,6 +20,9 @@ config:
   # When switching to true all players will lose their fields, but switching it back again will restore it.
   uuidMode: false
 
+  # In minutes. Decide how often plugin will automatically save all fields to data file.
+  saveInterval: 5
+
 permissions:
   getFieldInfo: gp.info
   alwaysGetAccurateFieldInfo: gp.info.bypass

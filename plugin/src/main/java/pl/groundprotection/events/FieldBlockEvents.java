@@ -156,4 +156,14 @@ public class FieldBlockEvents implements Listener {
         }
     }
 
+    @EventHandler
+    public void onExplodeField(BlockExplodeEvent event) {
+        for(Field f : fieldsManager.getFields()) {
+            if(f.getFieldLocation().equals(event.getBlock().getLocation())) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
 }

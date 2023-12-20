@@ -30,6 +30,7 @@ public final class GroundProtection extends JavaPlugin {
         this.fieldsManager = new FieldsManager();
         this.dataHandler = new DataHandler();
         dataHandler.loadConfig();
+        dataHandler.registerSaveTask();
         getServer().getPluginManager().registerEvents(new FieldBlockEvents(), this);
         getServer().getPluginManager().registerEvents(new FieldProtectionEvents(), this);
         PluginCommand command = getCommand("groundprotection");
