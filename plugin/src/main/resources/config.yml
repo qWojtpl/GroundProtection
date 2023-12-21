@@ -95,6 +95,7 @@ protectList:
     - BLAST_FURNACE
     - SMOKER
     - HOPPER
+    - BARREL
     - SHULKER_BOX
     - WHITE_SHULKER_BOX
     - LIGHT_GRAY_SHULKER_BOX
@@ -142,6 +143,7 @@ protectList:
     - HORSE
     - IRON_GOLEM
     - LLAMA
+    - TRADER_LLAMA
     - MOOSHROM
     - MULE
     - OCELOT
@@ -190,7 +192,10 @@ protectList:
     - ENDER_DRAGON
     - WITHER
   other_entities:
-    - CHEST_MINECART
+    - MINECART_CHEST
+    - MINECART_HOPPER
+    - MINECART_FURNACE
+    - MINECART_TNT
     - OAK_CHEST_BOAT
     - SPRUCE_CHEST_BOAT
     - BIRCH_CHEST_BOAT

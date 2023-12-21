@@ -104,7 +104,9 @@ public class FieldProtectionEvents implements Listener {
             if(schema.getFlags().contains(FieldFlag.PREVENT_PLACE)) {
                 if(event.getItem() != null) {
                     if(event.getItem().getType().name().toLowerCase().contains("bucket")
-                    || event.getItem().getType().equals(Material.BONE_MEAL)) {
+                    || event.getItem().getType().equals(Material.BONE_MEAL)
+                    || event.getItem().getType().equals(Material.ARMOR_STAND)
+                    || event.getItem().getType().equals(Material.END_CRYSTAL)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
                         break;
@@ -215,6 +217,33 @@ public class FieldProtectionEvents implements Listener {
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_OTHER_ENTITIES)) {
                 if(dataHandler.getOtherEntities().contains(clicked.getType().name())) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+        }
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantUse"));
+        }
+    }
+
+    @EventHandler
+    public void onInteractAtEntity(PlayerInteractAtEntityEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getRightClicked().getLocation());
+        for(Field field : fields) {
+            FieldSchema schema = field.getSchema();
+            if(fieldsManager.isAllowed(event.getRightClicked().getLocation(), p.getName())) {
+                continue;
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_ARMOR_STANDS)) {
+                if(event.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
                     event.setCancelled(true);
                     break;
                 }
