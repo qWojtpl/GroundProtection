@@ -12,9 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleCollisionEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
@@ -105,7 +103,7 @@ public class FieldProtectionEvents implements Listener {
             }
             if(schema.getFlags().contains(FieldFlag.PREVENT_PLACE)) {
                 if(event.getItem() != null) {
-                    if(event.getItem().getType().name().toLowerCase().contains("_bucket")
+                    if(event.getItem().getType().name().toLowerCase().contains("bucket")
                     || event.getItem().getType().equals(Material.BONE_MEAL)) {
                         event.setCancelled(true);
                         event.setUseItemInHand(Event.Result.DENY);
@@ -468,6 +466,54 @@ public class FieldProtectionEvents implements Listener {
         }
         if(event.isCancelled()) {
             p.sendMessage(messages.getMessage("cantDamage"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onBucketEmpty(PlayerBucketEmptyEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getBlock().getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PLACE)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantPlace"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onBucketFill(PlayerBucketFillEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getBlock().getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantBreak"));
         }
     }
 
