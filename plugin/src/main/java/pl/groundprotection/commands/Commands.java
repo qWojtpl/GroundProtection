@@ -6,6 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import pl.beaverlib.util.LocationUtil;
+import pl.beaverlib.util.PlayerUtil;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.Messages;
 import pl.groundprotection.fields.Field;
@@ -13,8 +15,6 @@ import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldVisualizer;
 import pl.groundprotection.fields.FieldsManager;
 import pl.groundprotection.permissions.PermissionManager;
-import pl.groundprotection.util.LocationUtil;
-import pl.groundprotection.util.PlayerUtil;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -97,32 +97,32 @@ public class Commands implements CommandExecutor {
             for(Field field : fields) {
                 String contributors = "§4-";
                 if(field.getFieldContributors().size() > 0) {
-                    contributors = PlayerUtil.unParseName(field.getFieldContributors().get(0));
+                    contributors = PlayerUtil.unParseName(field.getFieldContributors().get(0), plugin.getDataHandler().isUuidMode());
                     int i = 0;
                     for(String contributor : field.getFieldContributors()) {
                         if(i == 0) {
                             i++;
                             continue;
                         }
-                        contributors += ", " + PlayerUtil.unParseName(contributor);
+                        contributors += ", " + PlayerUtil.unParseName(contributor, plugin.getDataHandler().isUuidMode());
                     }
                 }
                 String location = LocationUtil.locationBuilder(field.getFieldLocation());
-                if(field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName())) ||
-                        field.getFieldContributors().contains(PlayerUtil.parseNickname(sender.getName())) ||
+                if(field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName(), plugin.getDataHandler().isUuidMode())) ||
+                        field.getFieldContributors().contains(PlayerUtil.parseNickname(sender.getName(), plugin.getDataHandler().isUuidMode())) ||
                         sender.hasPermission(permissionManager.getPermission("alwaysGetAccurateFieldInfo"))) {
                     String message = messages.getMessage("fieldInfoContributor");
                     String[] split = message.split("%nl%");
                     for(String msg : split) {
                         sender.sendMessage(MessageFormat.format(msg,
-                                PlayerUtil.unParseName(field.getFieldOwner()),
+                                PlayerUtil.unParseName(field.getFieldOwner(), plugin.getDataHandler().isUuidMode()),
                                 field.getSchema().getName(),
                                 contributors,
                                 location));
                     }
                 } else {
                     sender.sendMessage(MessageFormat.format(messages.getMessage("fieldInfo"),
-                            PlayerUtil.unParseName(field.getFieldOwner()),
+                            PlayerUtil.unParseName(field.getFieldOwner(), plugin.getDataHandler().isUuidMode()),
                             field.getSchema().getName(),
                             contributors,
                             location));
@@ -160,8 +160,8 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(field.getFieldOwner().equalsIgnoreCase(PlayerUtil.parseNickname(sender.getName())) ||
-                    field.getFieldContributors().contains(PlayerUtil.parseNickname(sender.getName())) ||
+            if(field.getFieldOwner().equalsIgnoreCase(PlayerUtil.parseNickname(sender.getName(), plugin.getDataHandler().isUuidMode())) ||
+                    field.getFieldContributors().contains(PlayerUtil.parseNickname(sender.getName(), plugin.getDataHandler().isUuidMode())) ||
                     sender.hasPermission(permissionManager.getPermission("alwaysVisualizeField"))) {
                 i++;
                 new FieldVisualizer(field, sender, materials[j], 16 + (2 * i));
@@ -257,10 +257,10 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName()))) {
+            if(!field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName(), plugin.getDataHandler().isUuidMode()))) {
                 continue;
             }
-            if(field.getFieldContributors().contains(PlayerUtil.parseNickname(nickname))) {
+            if(field.getFieldContributors().contains(PlayerUtil.parseNickname(nickname, plugin.getDataHandler().isUuidMode()))) {
                 j++;
                 continue;
             }
@@ -290,10 +290,10 @@ public class Commands implements CommandExecutor {
         int i = 0;
         int j = 0;
         for(Field field : fields) {
-            if(!field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName()))) {
+            if(!field.getFieldOwner().equals(PlayerUtil.parseNickname(sender.getName(), plugin.getDataHandler().isUuidMode()))) {
                 continue;
             }
-            if(!field.getFieldContributors().contains(PlayerUtil.parseNickname(nickname))) {
+            if(!field.getFieldContributors().contains(PlayerUtil.parseNickname(nickname, plugin.getDataHandler().isUuidMode()))) {
                 j++;
                 continue;
             }

@@ -3,10 +3,10 @@ package pl.groundprotection.fields;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import pl.beaverlib.util.PlayerUtil;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.DataHandler;
 import pl.groundprotection.data.Messages;
-import pl.groundprotection.util.PlayerUtil;
 
 import javax.annotation.Nullable;
 import java.text.MessageFormat;
@@ -50,7 +50,7 @@ public class FieldsManager {
     }
 
     public boolean canPlaceField(FieldSchema schema, String player, Location location) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         for(Field field : fields) {
             FieldSchema s = field.getSchema();
             if(plugin.getDataHandler().isFieldOverlap()) {
@@ -120,7 +120,7 @@ public class FieldsManager {
     }
 
     public List<Field> getPlayerFields(String player) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         List<Field> playerFields = new ArrayList<>();
         for(Field field : fields) {
             if(field.getFieldOwner().equals(player)) {
@@ -135,7 +135,7 @@ public class FieldsManager {
     }
 
     public List<Field> getPlayerFieldsBySchema(String player, FieldSchema schema) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         List<Field> playerFields = new ArrayList<>();
         for(Field field : fields) {
             if(field.getFieldOwner().equals(player)) {
@@ -148,7 +148,7 @@ public class FieldsManager {
     }
 
     public void createField(FieldSchema schema, String owner, Location location) {
-        owner = PlayerUtil.parseNickname(owner);
+        owner = PlayerUtil.parseNickname(owner, plugin.getDataHandler().isUuidMode());
         DataHandler dataHandler = plugin.getDataHandler();
         dataHandler.setLastFieldID(dataHandler.getLastFieldID() + 1);
         Field field = new Field(dataHandler.getLastFieldID(), schema, location, owner, new ArrayList<>());
@@ -190,7 +190,7 @@ public class FieldsManager {
     }
 
     public boolean isAllowed(Location location, String player) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         for(Field field : plugin.getFieldsManager().getFields(location)) {
             if(field.getFieldOwner().equals(player)) {
                 return true;
@@ -207,7 +207,7 @@ public class FieldsManager {
     }
 
     public boolean isReachedLimit(FieldSchema schema, String player) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         return getCurrentCount(schema, player) >= getLimit(schema, player);
     }
 
@@ -216,7 +216,7 @@ public class FieldsManager {
     }
 
     public int getCurrentCount(FieldSchema schema, String player) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         int count = 0;
         for(Field field : fields) {
             if(field.getFieldOwner().equals(player)) {
@@ -233,7 +233,7 @@ public class FieldsManager {
     }
 
     public int getLimit(FieldSchema schema, String player) {
-        Player p = PlayerUtil.getPlayer(PlayerUtil.parseNickname(player));
+        Player p = PlayerUtil.getPlayer(PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode()));
         if(p == null) {
             return 0;
         }
@@ -259,14 +259,14 @@ public class FieldsManager {
     }
 
     public void addContributor(Field field, String player) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         field.getFieldContributors().remove(player);
         field.getFieldContributors().add(player);
         plugin.getDataHandler().saveFieldContributors(field);
     }
 
     public void removeContributor(Field field, String player) {
-        player = PlayerUtil.parseNickname(player);
+        player = PlayerUtil.parseNickname(player, plugin.getDataHandler().isUuidMode());
         field.getFieldContributors().remove(player);
         plugin.getDataHandler().saveFieldContributors(field);
     }

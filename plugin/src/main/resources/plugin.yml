@@ -4,6 +4,8 @@ main: pl.groundprotection.GroundProtection
 api-version: 1.19
 authors: [Assasin98980]
 description: Create protection fields in your Minecraft server
+depend:
+  - BeaverLib
 commands:
   groundprotection:
     usage: /<command>

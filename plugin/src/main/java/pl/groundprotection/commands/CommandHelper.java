@@ -5,9 +5,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import pl.beaverlib.util.PlayerUtil;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.permissions.PermissionManager;
-import pl.groundprotection.util.PlayerUtil;
 
 import java.util.ArrayList;
 import java.util.List;

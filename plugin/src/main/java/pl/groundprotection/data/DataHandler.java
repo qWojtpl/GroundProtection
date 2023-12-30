@@ -7,9 +7,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import pl.beaverlib.util.DateManager;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.fields.*;
-import pl.groundprotection.util.DateManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,7 +141,9 @@ public class DataHandler {
             List<String> contributors = yml.getStringList(path + "contributors");
             List<Integer> cords = yml.getIntegerList(path + "location");
             String worldStr = yml.getString(path + "world");
-            if(worldStr == null) continue;
+            if(worldStr == null) {
+                continue;
+            }
             World w = plugin.getServer().getWorld(worldStr);
             if(w == null) {
                 plugin.getLogger().info("Cannot find world: " + worldStr);

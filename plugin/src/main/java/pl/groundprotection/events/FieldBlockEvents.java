@@ -10,14 +10,14 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import pl.beaverlib.util.LocationUtil;
+import pl.beaverlib.util.PlayerUtil;
 import pl.groundprotection.GroundProtection;
 import pl.groundprotection.data.Messages;
 import pl.groundprotection.fields.Field;
 import pl.groundprotection.fields.FieldItem;
 import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
-import pl.groundprotection.util.LocationUtil;
-import pl.groundprotection.util.PlayerUtil;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -122,7 +122,7 @@ public class FieldBlockEvents implements Listener {
             return;
         }
         event.setCancelled(true);
-        if(field.getFieldOwner().equals(PlayerUtil.parseNickname(p.getName()))
+        if(field.getFieldOwner().equals(PlayerUtil.parseNickname(p.getName(), plugin.getDataHandler().isUuidMode()))
                 || p.hasPermission(plugin.getPermissionManager().getPermission("removeFieldIfNotOwner"))) {
             fieldsManager.removeField(field, p.getName());
             event.getBlock().setType(Material.AIR);
