@@ -11,6 +11,8 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -531,6 +533,60 @@ public class FieldProtectionEvents implements Listener {
         List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
         for(Field field : fields) {
             if(fieldsManager.isAllowed(event.getBlock().getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantBreak"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onHangEntity(HangingPlaceEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        Player p = event.getPlayer();
+        if(p == null) {
+            return;
+        }
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getBlock().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getBlock().getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PLACE)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+        if(event.isCancelled()) {
+            p.sendMessage(messages.getMessage("cantPlace"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onUnhangEntity(HangingBreakByEntityEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!(event.getRemover() instanceof Player)) {
+            return;
+        }
+        Player p = (Player) event.getRemover();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getEntity().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getEntity().getLocation(), p.getName())) {
                 continue;
             }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {

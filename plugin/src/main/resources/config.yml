@@ -157,6 +157,8 @@ protectList:
     - SNOW_GOLEM
     - WANDERING_TRADER
     - ZOMBIE_HORSE
+    - CAMEL
+    - SNIFFER
   hostiles:
     - BLAZE
     - CAVE_SPIDER
@@ -203,3 +205,6 @@ protectList:
     - ACACIA_CHEST_BOAT
     - DARK_OAK_CHEST_BOAT
     - MANGROVE_CHEST_BOAT
+    - ITEM_FRAME
+    - GLOW_ITEM_FRAME
+    - ARMOR_STAND
