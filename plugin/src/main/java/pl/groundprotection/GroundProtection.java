@@ -3,6 +3,8 @@ package pl.groundprotection;
 import lombok.Getter;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import pl.beaverlib.BeaverLib;
+import pl.beaverlib.update.UpdateObject;
 import pl.groundprotection.api.GroundProtectionAPI;
 import pl.groundprotection.commands.CommandHelper;
 import pl.groundprotection.commands.Commands;
@@ -38,6 +40,8 @@ public final class GroundProtection extends JavaPlugin {
             command.setExecutor(new Commands());
             command.setTabCompleter(new CommandHelper());
         }
+        BeaverLib.getInstance().getUpdateManager().registerUpdateObject(
+                new UpdateObject("GroundProtection", "1.0.0", "qWojtpl/GroundProtection"));
         getLogger().info("Loaded.");
     }
 
