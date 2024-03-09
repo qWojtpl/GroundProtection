@@ -122,6 +122,7 @@ protectList:
     - CHAIN_COMMAND_BLOCK
     - REPEATING_COMMAND_BLOCK
     - STONE_PRESSURE_PLATE
+    - TURTLE_EGG
   animals:
     - COW
     - PIG
@@ -139,6 +140,7 @@ protectList:
     - FOX
     - FROG
     - GLOW_SQUID
+    - SQUID
     - GOAT
     - HORSE
     - IRON_GOLEM
@@ -154,11 +156,14 @@ protectList:
     - SALMON
     - SHEEP
     - SKELETON_HORSE
-    - SNOW_GOLEM
+    - SNOWMAN
     - WANDERING_TRADER
     - ZOMBIE_HORSE
     - CAMEL
     - SNIFFER
+    - TROPICAL_FISH
+    - MUSHROOM_COW
+    - TADPOLE
   hostiles:
     - BLAZE
     - CAVE_SPIDER

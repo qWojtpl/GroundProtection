@@ -1,4 +1,4 @@
-./plugin/.idea
-./plugin/out
-./plugin/target
+plugin/.idea/
+plugin/out/
+plugin/target/
 *.iml

@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -441,11 +442,35 @@ public class FieldProtectionEvents implements Listener {
         }
         for(Block b : event.blockList()) {
             List<Field> fields = fieldsManager.getFields(b.getLocation());
-            for (Field field : fields) {
-                if (field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+            for(Field field : fields) {
+                if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
                     event.setCancelled(true);
                     break;
                 }
+            }
+        }
+        List<Field> fields = fieldsManager.getFields(event.getEntity().getLocation());
+        for(Field field : fields) {
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onDamageByExplosion(EntityDamageEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!event.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)
+                && !event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getEntity().getLocation());
+        for(Field field : fields) {
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+                event.setCancelled(true);
             }
         }
     }

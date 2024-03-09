@@ -3,7 +3,6 @@ package pl.groundprotection;
 import lombok.Getter;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import pl.beaverlib.BeaverLib;
 import pl.groundprotection.api.GroundProtectionAPI;
 import pl.groundprotection.commands.CommandHelper;
 import pl.groundprotection.commands.Commands;
