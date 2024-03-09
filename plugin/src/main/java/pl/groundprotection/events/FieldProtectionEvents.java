@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
@@ -181,16 +182,22 @@ public class FieldProtectionEvents implements Listener {
         if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
             return;
         }
+        Entity clicked = event.getRightClicked();
         List<Field> fields = fieldsManager.getFields(event.getRightClicked().getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
             if(fieldsManager.isAllowed(event.getRightClicked().getLocation(), p.getName())) {
                 continue;
             }
-            Entity clicked = event.getRightClicked();
             if(schema.getFlags().contains(FieldFlag.PREVENT_SPAWN_EGGS)) {
                 if(p.getInventory().getItemInMainHand().getType().name().toLowerCase().contains("_spawn_egg")
                 || p.getInventory().getItemInOffHand().getType().name().toLowerCase().contains("_spawn_egg")) {
+                    event.setCancelled(true);
+                    break;
+                }
+            }
+            if(schema.getFlags().contains(FieldFlag.PROTECT_CHESTS)) {
+                if(clicked instanceof ChestBoat && p.isSneaking()) {
                     event.setCancelled(true);
                     break;
                 }
@@ -596,6 +603,35 @@ public class FieldProtectionEvents implements Listener {
         }
         if(event.isCancelled()) {
             p.sendMessage(messages.getMessage("cantBreak"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onOpenChestBoat(InventoryOpenEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(event.getPlayer().hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        if(event.getPlayer().getVehicle() == null) {
+            return;
+        }
+        if(!(event.getPlayer().getVehicle() instanceof ChestBoat)) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getPlayer().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getPlayer().getLocation(), event.getPlayer().getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PROTECT_CHESTS)) {
+                event.setCancelled(true);
+                break;
+            }
+        }
+        if(event.isCancelled()) {
+            event.getPlayer().sendMessage(messages.getMessage("cantUse"));
         }
     }
 
