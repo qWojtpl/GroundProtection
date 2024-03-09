@@ -1,0 +1,4 @@
+./plugin/.idea
+./plugin/out
+./plugin/target
+*.iml
