@@ -284,8 +284,8 @@ public class FieldProtectionEvents implements Listener {
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
             if(p != null) {
-                if (schema.getFlags().contains(FieldFlag.PREVENT_PVP)) {
-                    if (victim instanceof Player) {
+                if(schema.getFlags().contains(FieldFlag.PREVENT_PVP)) {
+                    if(victim instanceof Player) {
                         event.setCancelled(true);
                         break;
                     }
@@ -315,6 +315,19 @@ public class FieldProtectionEvents implements Listener {
         }
         if(event.isCancelled() && p != null) {
             p.sendMessage(messages.getMessage("cantDamage"));
+        } else {
+            if(p != null) {
+                List<Field> fieldList = fieldsManager.getFields(event.getDamager().getLocation());
+                for(Field field : fieldList) {
+                    if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_PVP)) {
+                        if(victim instanceof Player) {
+                            event.setCancelled(true);
+                            p.sendMessage(messages.getMessage("cantDamage"));
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -653,6 +666,42 @@ public class FieldProtectionEvents implements Listener {
         }
         if(event.isCancelled()) {
             event.getPlayer().sendMessage(messages.getMessage("cantUse"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onMoveBlock(BlockPistonExtendEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(fieldsManager.getFields(event.getBlock().getLocation()).size() != 0) {
+            return;
+        }
+        for(Block b : event.getBlocks()) {
+            for(Field field : fieldsManager.getFields(b.getLocation())) {
+                if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onTakeBlock(BlockPistonRetractEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(fieldsManager.getFields(event.getBlock().getLocation()).size() != 0) {
+            return;
+        }
+        for(Block b : event.getBlocks()) {
+            for(Field field : fieldsManager.getFields(b.getLocation())) {
+                if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
     }
 
