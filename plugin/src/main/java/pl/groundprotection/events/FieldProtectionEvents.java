@@ -8,10 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -27,6 +24,7 @@ import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
 import pl.groundprotection.permissions.PermissionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FieldProtectionEvents implements Listener {
@@ -424,12 +422,11 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
-        for(Block b : event.blockList()) {
+        for(Block b : new ArrayList<>(event.blockList())) {
             List<Field> fields = fieldsManager.getFields(b.getLocation());
             for(Field field : fields) {
                 if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
-                    event.setCancelled(true);
-                    break;
+                    event.blockList().remove(b);
                 }
             }
         }
@@ -440,20 +437,19 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
-        for(Block b : event.blockList()) {
-            List<Field> fields = fieldsManager.getFields(b.getLocation());
-            for(Field field : fields) {
-                if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
-                    event.setCancelled(true);
-                    break;
-                }
-            }
-        }
         List<Field> fields = fieldsManager.getFields(event.getEntity().getLocation());
         for(Field field : fields) {
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
                 event.setCancelled(true);
-                break;
+                return;
+            }
+        }
+        for(Block b : new ArrayList<>(event.blockList())) {
+            List<Field> fieldList = fieldsManager.getFields(b.getLocation());
+            for(Field field : fieldList) {
+                if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_EXPLOSIONS)) {
+                    event.blockList().remove(b);
+                }
             }
         }
     }

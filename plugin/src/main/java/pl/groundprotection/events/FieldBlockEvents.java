@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,6 +21,7 @@ import pl.groundprotection.fields.FieldSchema;
 import pl.groundprotection.fields.FieldsManager;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FieldBlockEvents implements Listener {
@@ -158,10 +160,22 @@ public class FieldBlockEvents implements Listener {
 
     @EventHandler
     public void onExplodeField(BlockExplodeEvent event) {
-        for(Field f : fieldsManager.getFields()) {
-            if(f.getFieldLocation().equals(event.getBlock().getLocation())) {
-                event.setCancelled(true);
-                return;
+        for(Block block : new ArrayList<>(event.blockList())) {
+            for(Field f : fieldsManager.getFields()) {
+                if(f.getFieldLocation().equals(block.getLocation())) {
+                    event.blockList().remove(block);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityExplodeField(EntityExplodeEvent event) {
+        for(Block block : new ArrayList<>(event.blockList())) {
+            for(Field f : fieldsManager.getFields()) {
+                if(f.getFieldLocation().equals(block.getLocation())) {
+                    event.blockList().remove(block);
+                }
             }
         }
     }
