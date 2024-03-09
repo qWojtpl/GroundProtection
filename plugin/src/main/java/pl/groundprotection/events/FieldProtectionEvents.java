@@ -266,35 +266,35 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
-        Player p;
+        Player p = null;
         if(!(event.getDamager() instanceof Player)) {
             if(event.getDamager() instanceof Projectile) {
                 if(((Projectile) event.getDamager()).getShooter() instanceof Player) {
                     p = (Player) ((Projectile) event.getDamager()).getShooter();
-                } else {
-                    return;
                 }
-            } else {
-                return;
             }
         } else {
             p = (Player) event.getDamager();
         }
-        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
-            return;
+        if(p != null) {
+            if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+                return;
+            }
         }
         Entity victim = event.getEntity();
         List<Field> fields = fieldsManager.getFields(victim.getLocation());
         for(Field field : fields) {
             FieldSchema schema = field.getSchema();
-            if(schema.getFlags().contains(FieldFlag.PREVENT_PVP)) {
-                if(victim instanceof Player) {
-                    event.setCancelled(true);
-                    break;
+            if(p != null) {
+                if (schema.getFlags().contains(FieldFlag.PREVENT_PVP)) {
+                    if (victim instanceof Player) {
+                        event.setCancelled(true);
+                        break;
+                    }
                 }
-            }
-            if(fieldsManager.isAllowed(victim.getLocation(), p.getName())) {
-                continue;
+                if(fieldsManager.isAllowed(victim.getLocation(), p.getName())) {
+                    continue;
+                }
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_ANIMALS)) {
                 if(dataHandler.getAnimals().contains(victim.getType().name())) {
@@ -315,7 +315,7 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
-        if(event.isCancelled()) {
+        if(event.isCancelled() && p != null) {
             p.sendMessage(messages.getMessage("cantDamage"));
         }
     }
