@@ -22,7 +22,8 @@ public enum FieldFlag {
     PREVENT_SPAWN_EGGS(""),
     PREVENT_NAME_TAGS(""),
     PREVENT_VEHICLE_PLACE(""),
-    PREVENT_EXPLOSIONS("");
+    PREVENT_EXPLOSIONS(""),
+    PREVENT_FLOW_IN("");
 
     private final String description;
 

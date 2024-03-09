@@ -705,4 +705,21 @@ public class FieldProtectionEvents implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onFlow(BlockFromToEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(!event.getBlock().getType().equals(Material.WATER) && !event.getBlock().getType().equals(Material.LAVA)) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getToBlock().getLocation());
+        for(Field field : fields) {
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_FLOW_IN)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
 }
