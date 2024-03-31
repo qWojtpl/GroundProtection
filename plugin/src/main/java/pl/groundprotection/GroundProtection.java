@@ -41,7 +41,7 @@ public final class GroundProtection extends JavaPlugin {
             command.setTabCompleter(new CommandHelper());
         }
         BeaverLib.getInstance().getUpdateManager().registerUpdateObject(
-                new UpdateObject("GroundProtection", "1.0.0", "qWojtpl/GroundProtection"));
+                new UpdateObject("GroundProtection", "1.0.1", "qWojtpl/GroundProtection"));
         getLogger().info("Loaded.");
     }
 
