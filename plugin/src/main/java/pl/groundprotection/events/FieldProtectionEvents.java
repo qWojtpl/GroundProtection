@@ -725,4 +725,36 @@ public class FieldProtectionEvents implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        if(event.getHitBlock() == null) {
+            return;
+        }
+        if(!Material.CHORUS_FLOWER.equals(event.getHitBlock().getType())
+                && !Material.POINTED_DRIPSTONE.equals(event.getHitBlock().getType())) {
+            return;
+        }
+        if(!(event.getEntity().getShooter() instanceof Player)) {
+            return;
+        }
+        Player p = (Player) event.getEntity().getShooter();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(event.getHitBlock().getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(event.getHitBlock().getLocation(), p.getName())) {
+                continue;
+            }
+            if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
+                event.setCancelled(true);
+                p.sendMessage(messages.getMessage("cantBreak"));
+                return;
+            }
+        }
+    }
+
 }
