@@ -23,6 +23,7 @@ public final class GroundProtection extends JavaPlugin {
     private PermissionManager permissionManager;
     private DataHandler dataHandler;
     private Messages messages;
+    private GroundProtection groundProtection;
 
     @Override
     public void onEnable() {
@@ -41,7 +42,7 @@ public final class GroundProtection extends JavaPlugin {
             command.setTabCompleter(new CommandHelper());
         }
         BeaverLib.getInstance().getUpdateManager().registerUpdateObject(
-                new UpdateObject("GroundProtection", "1.0.1", "qWojtpl/GroundProtection"));
+                new UpdateObject("GroundProtection", getDescription().getVersion(), "qWojtpl/GroundProtection"));
         getLogger().info("Loaded.");
     }
 

@@ -15,6 +15,9 @@ public class PermissionManager {
         if(id == null || name == null) {
             return null;
         }
+        if(description == null) {
+            description = "";
+        }
         Permission check = plugin.getServer().getPluginManager().getPermission(name);
         if(check != null) {
             plugin.getServer().getPluginManager().removePermission(check);

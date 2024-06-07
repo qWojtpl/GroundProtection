@@ -1,5 +1,8 @@
 package pl.groundprotection.fields;
 
+import lombok.Getter;
+
+@Getter
 public enum FieldFlag {
 
     PREVENT_DESTROY(""),
@@ -29,10 +32,6 @@ public enum FieldFlag {
 
     FieldFlag(String description) {
         this.description = description;
-    }
-
-    public String getDescription() {
-        return this.description;
     }
 
 }

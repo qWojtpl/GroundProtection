@@ -40,7 +40,6 @@ public class DataHandler {
         plugin.getFieldsManager().getSchemas().clear();
         plugin.getMessages().clearMessages();
         plugin.getPermissionManager().clearPermissions();
-        doorBlocks.clear();
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(getConfigFile());
         fieldOverlap = yml.getBoolean("config.fieldOverlap", true);
         uuidMode = yml.getBoolean("config.uuidMode", false);
