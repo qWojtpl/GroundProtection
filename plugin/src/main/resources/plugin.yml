@@ -12,3 +12,8 @@ commands:
     description: Use GroundProtection plugin
     aliases:
       - gp
+  groundprotectionadmin:
+    usage: /<command>
+    description: Manage GroundProtection plugin
+    aliases:
+      - gpadmin

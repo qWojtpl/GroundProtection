@@ -132,9 +132,11 @@ public class FieldProtectionEvents implements Listener {
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_INTERACTABLE_BLOCKS)) {
                 if(event.getClickedBlock().getType().isInteractable()) {
-                    event.setCancelled(true);
-                    event.setUseInteractedBlock(Event.Result.DENY);
-                    break;
+                    if(!dataHandler.getProtectInteractableBlocksExclude().contains(event.getClickedBlock().getType().name())) {
+                        event.setCancelled(true);
+                        event.setUseInteractedBlock(Event.Result.DENY);
+                        break;
+                    }
                 }
             }
             if(schema.getFlags().contains(FieldFlag.PROTECT_DOORS)) {
@@ -733,8 +735,7 @@ public class FieldProtectionEvents implements Listener {
         if(event.getHitBlock() == null) {
             return;
         }
-        if(!Material.CHORUS_FLOWER.equals(event.getHitBlock().getType())
-                && !Material.POINTED_DRIPSTONE.equals(event.getHitBlock().getType())) {
+        if(!dataHandler.getProjectileProtectBlocks().contains(event.getHitBlock().getType().name())) {
             return;
         }
         if(!(event.getEntity().getShooter() instanceof Player)) {

@@ -207,3 +207,9 @@ protectList:
     - ITEM_FRAME
     - GLOW_ITEM_FRAME
     - ARMOR_STAND
+  projectile_protect_blocks:
+    - POINTED_DRIPSTONE
+    - CHORUS_FLOWER
+    - DECORATED_POT
+  protect_interactable_blocks_exclude:
+    - CRAFTING_TABLE
