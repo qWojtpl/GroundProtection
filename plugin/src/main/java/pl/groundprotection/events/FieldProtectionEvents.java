@@ -780,5 +780,6 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
+    }
 
 }
