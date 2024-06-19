@@ -758,4 +758,27 @@ public class FieldProtectionEvents implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCommand(PlayerCommandPreprocessEvent event) {
+        if(event.isCancelled()) {
+            return;
+        }
+        Player p = event.getPlayer();
+        if(p.hasPermission(permissionManager.getPermission("bypassFieldProtection"))) {
+            return;
+        }
+        List<Field> fields = fieldsManager.getFields(p.getLocation());
+        for(Field field : fields) {
+            if(fieldsManager.isAllowed(p.getLocation(), p.getName())) {
+                continue;
+            }
+            for(String cmd : field.getSchema().getBlockedCommands()) {
+                if(event.getMessage().startsWith(cmd + " ") || event.getMessage().equals(cmd)) {
+                    event.setCancelled(true);
+                    p.sendMessage(messages.getMessage("cantUseCommand"));
+                    return;
+                }
+            }
+        }
+
 }

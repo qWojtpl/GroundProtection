@@ -28,3 +28,4 @@ messages:
   cantDamage: "&cYou can't damage it"
   cantBreak: "&cYou can't break it"
   cantPlace: "&cYou can't place it"
+  cantUseCommand: "&cYou can't use that command here"

@@ -60,6 +60,9 @@ fields:
     limits:
       - gp.place.cuboid:1
       - member.vip:3
+    blocked-commands:
+      - /sethome
+      - /minecraft:ride
   nonPVP:
     size: 21
     item:
@@ -75,6 +78,8 @@ fields:
     limits:
       - gp.place.nonpvp:1
       - member.vip:10
+    blocked-commands:
+      - /gp visualize
 
 protectList:
   door_blocks:

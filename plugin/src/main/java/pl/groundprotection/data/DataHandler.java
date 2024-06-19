@@ -102,6 +102,7 @@ public class DataHandler {
             }
             List<String> disabledWorlds = yml.getStringList(path + "disabledWorlds");
             List<String> limits = yml.getStringList(path + "limits");
+            List<String> blockedCommands = yml.getStringList(path + "blocked-commands");
             FieldSchema schema = new FieldSchema(
                     fieldName,
                     size,
@@ -110,6 +111,7 @@ public class DataHandler {
                     flags,
                     disabledWorlds,
                     limits,
+                    blockedCommands,
                     daysToRemove
             );
             fieldsManager.addFieldSchema(schema);
