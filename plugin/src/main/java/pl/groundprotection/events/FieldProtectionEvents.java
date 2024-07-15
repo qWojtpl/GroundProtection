@@ -715,11 +715,21 @@ public class FieldProtectionEvents implements Listener {
         if(!event.getBlock().getType().equals(Material.WATER) && !event.getBlock().getType().equals(Material.LAVA)) {
             return;
         }
-        if(fieldsManager.getFields(event.getBlock().getLocation()).size() != 0) {
-            return;
-        }
+        List<Field> sourceFields = fieldsManager.getFields(event.getBlock().getLocation());
         List<Field> fields = fieldsManager.getFields(event.getToBlock().getLocation());
         for(Field field : fields) {
+            boolean found = false;
+            for(Field sourceField : sourceFields) {
+                if(sourceField.getFieldOwner().equals(field.getFieldOwner())
+                || (sourceField.getFieldContributors().contains(field.getFieldOwner())
+                && field.getFieldContributors().contains(sourceField.getFieldOwner()))) {
+                    found = true;
+                    break;
+                }
+            }
+            if(found) {
+                continue;
+            }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_FLOW_IN)) {
                 event.setCancelled(true);
                 return;
