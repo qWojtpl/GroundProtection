@@ -676,11 +676,12 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
-        if(fieldsManager.getFields(event.getBlock().getLocation()).size() != 0) {
-            return;
-        }
+        List<Field> sourceFields = fieldsManager.getFields(event.getBlock().getLocation());
         for(Block b : event.getBlocks()) {
             for(Field field : fieldsManager.getFields(b.getLocation())) {
+                if(hasCommon(sourceFields, field)) {
+                    continue;
+                }
                 if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
                     event.setCancelled(true);
                     return;
@@ -694,11 +695,12 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
-        if(fieldsManager.getFields(event.getBlock().getLocation()).size() != 0) {
-            return;
-        }
+        List<Field> sourceFields = fieldsManager.getFields(event.getBlock().getLocation());
         for(Block b : event.getBlocks()) {
             for(Field field : fieldsManager.getFields(b.getLocation())) {
+                if(hasCommon(sourceFields, field)) {
+                    continue;
+                }
                 if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_DESTROY)) {
                     event.setCancelled(true);
                     return;
@@ -712,22 +714,15 @@ public class FieldProtectionEvents implements Listener {
         if(event.isCancelled()) {
             return;
         }
-        if(!event.getBlock().getType().equals(Material.WATER) && !event.getBlock().getType().equals(Material.LAVA)) {
+        Block block = event.getBlock();
+        if(!block.getType().equals(Material.WATER)
+        && !block.getType().equals(Material.LAVA)) {
             return;
         }
-        List<Field> sourceFields = fieldsManager.getFields(event.getBlock().getLocation());
+        List<Field> sourceFields = fieldsManager.getFields(block.getLocation());
         List<Field> fields = fieldsManager.getFields(event.getToBlock().getLocation());
         for(Field field : fields) {
-            boolean found = false;
-            for(Field sourceField : sourceFields) {
-                if(sourceField.getFieldOwner().equals(field.getFieldOwner())
-                || (sourceField.getFieldContributors().contains(field.getFieldOwner())
-                && field.getFieldContributors().contains(sourceField.getFieldOwner()))) {
-                    found = true;
-                    break;
-                }
-            }
-            if(found) {
+            if(hasCommon(sourceFields, field)) {
                 continue;
             }
             if(field.getSchema().getFlags().contains(FieldFlag.PREVENT_FLOW_IN)) {
@@ -790,6 +785,17 @@ public class FieldProtectionEvents implements Listener {
                 }
             }
         }
+    }
+
+    private boolean hasCommon(List<Field> sourceFields, Field field) {
+        for(Field sourceField : sourceFields) {
+            if(sourceField.getFieldOwner().equals(field.getFieldOwner())
+                    || (sourceField.getFieldContributors().contains(field.getFieldOwner())
+                    && field.getFieldContributors().contains(sourceField.getFieldOwner()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
